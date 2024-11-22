@@ -88,7 +88,7 @@ import InputBox from '@/views/Account/components/InputBox.vue'
 }
 
 .signin .publish {
-  color: #000000;
+  color: #2d3134;
   font-family: 'Red Hat Display-Bold', Helvetica;
   font-size: 18px;
   font-weight: 700;
