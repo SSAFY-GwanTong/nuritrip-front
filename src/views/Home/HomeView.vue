@@ -3,11 +3,11 @@
     <div class="div">
       <img class="shiba-inu-dog" alt="Shiba inu dog" :src="shibaInuDogShowingMuscles" />
       <div class="group">
-        <div class="overlap-group-wrapper">
+        <RouterLink to="/signin" class="overlap-group-wrapper">
           <div class="overlap-group">
             <div class="text-wrapper">시작하기</div>
           </div>
-        </div>
+        </RouterLink>
         <p class="p">
           당신의 체력에 맞춘
           <br />
@@ -28,7 +28,7 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
 
 <style scoped>
 .mainpage {
-  background-color: #fff1da;
+  background-color: var(--bgcolor);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -40,7 +40,7 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   top: 0;
 }
 .mainpage .div {
-  background-color: #fff1da;
+  background-color: var(--bgcolor);
   height: 900px;
   overflow-x: hidden;
   position: relative;
@@ -69,7 +69,7 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   width: 225px;
 }
 .mainpage .overlap-group {
-  background-color: #f66f4d;
+  background-color: var(--maincolor);
   border-radius: 40px;
   height: 70px;
   width: 223px;
@@ -87,7 +87,6 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   white-space: nowrap;
 }
 .mainpage .p {
-  color: #000000;
   font-size: 60px;
   font-weight: 600;
   letter-spacing: 0;
@@ -95,7 +94,6 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   width: 507px;
 }
 .mainpage .text-wrapper-2 {
-  color: #000000;
   font-size: 25px;
   font-weight: 400;
   left: 0;
@@ -109,7 +107,7 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
 
 .mainpage .div-wrapper {
   border: 1.4px solid;
-  border-color: #f66f4d;
+  border-color: var(--maincolor);
   border-radius: 27px;
   height: 54px;
   left: 129px;
@@ -117,7 +115,7 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   width: 170px;
 }
 .mainpage .text-wrapper-3 {
-  color: #f66f4d;
+  color: var(--maincolor);
   font-family: 'Poppins-SemiBold', Helvetica;
   font-size: 20px;
   font-weight: 600;
@@ -129,7 +127,6 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   width: 80px;
 }
 .mainpage .text-wrapper-4 {
-  color: #2d3134;
   font-family: 'Poppins-SemiBold', Helvetica;
   font-size: 20px;
   font-weight: 600;
@@ -153,7 +150,6 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   width: 42px;
 }
 .mainpage .text-wrapper-5 {
-  color: #2d3134;
   font-family: 'Sen-Bold', Helvetica;
   font-size: 30px;
   font-weight: 700;
