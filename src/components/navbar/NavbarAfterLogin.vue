@@ -40,7 +40,7 @@ const level = ref(3)
 .navbar {
   z-index: 1;
   height: 80px;
-  position: fixed;
+  position: sticky;
   top: 0;
   right: 0;
   left: 0;
@@ -49,7 +49,7 @@ const level = ref(3)
   display: flex; /* Flexbox 사용 */
   align-items: center; /* 세로 중앙 정렬 */
   padding: 0 10px; /* 좌우 패딩 추가 */
-  border-bottom: 1px solid #DBDBDB;
+  border-bottom: 1px solid #dbdbdb;
 }
 
 nav ul {
@@ -107,7 +107,7 @@ img {
   background: #f5f6fa;
   border: none;
 }
-.user-info{
+.user-info {
   margin-left: 15px;
   font-weight: 550;
   text-decoration: none;

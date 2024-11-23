@@ -6,8 +6,9 @@ body {
   height: 100%;
 }
 
-:root{
+:root {
   --textcolor: #2d3134;
   --bgcolor: #fff1da;
   --maincolor: #f66f4d;
+  --graycolor: #EFEFEF;
 }
