@@ -4,10 +4,10 @@
       <ul>
         <div class="nav-left-div">
           <li class="nav-left">
-            <div class="logo">
+            <RouterLink to="/" class="logo">
               <img class="union" alt="Union" :src="union" />
               <div class="text-wrapper-2">NURI TRIP</div>
-            </div>
+            </RouterLink>
           </li>
         </div>
       </ul>
@@ -51,10 +51,11 @@ nav ul {
 .logo {
   display: flex;
   align-items: center; /* 세로 중앙 정렬 */
+  text-decoration: none;
 }
 
 .text-wrapper-2 {
-  color: #2d3134;
+  color: var(--textcolor);
   font-size: 30px;
   font-weight: 700;
   white-space: nowrap;

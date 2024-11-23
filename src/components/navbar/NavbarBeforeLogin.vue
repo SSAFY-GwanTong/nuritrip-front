@@ -4,20 +4,20 @@
       <ul>
         <div class="nav-left-div">
           <li class="nav-left">
-            <div class="logo">
+            <RouterLink to="/" class="logo">
               <img class="union" alt="Union" :src="union" />
               <div class="text-wrapper-2">NURI TRIP</div>
-            </div>
+            </RouterLink>
           </li>
         </div>
         <div class="nav-right-div">
           <li class="nav-right">
-            <div class="div">로그인</div>
+            <RouterLink to="/signin" class="div">로그인</RouterLink>
           </li>
           <li class="nav-right">
-            <div class="overlap-group">
+            <RouterLink to="/signup" class="overlap-group">
               <div class="text-wrapper">회원가입</div>
-            </div>
+            </RouterLink>
           </li>
         </div>
       </ul>
@@ -74,21 +74,23 @@ nav ul {
 .logo {
   display: flex;
   align-items: center; /* 세로 중앙 정렬 */
+  text-decoration: none;
 }
 
 .overlap-group {
   border: 2px solid;
-  border-color: #f66f4d;
+  border-color: var(--maincolor);
   border-radius: 27px;
   height: 54px;
   display: flex; /* Flexbox 사용 */
   align-items: center; /* 세로 중앙 정렬 */
   justify-content: center; /* 가로 중앙 정렬 */
   width: 170px;
+  text-decoration: none;
 }
 
 .text-wrapper {
-  color: #f66f4d;
+  color: var(--maincolor);
   font-size: 20px;
   font-weight: 600;
   text-align: center;
@@ -97,16 +99,15 @@ nav ul {
 }
 
 .div {
-  color: #2d3134;
   font-size: 20px;
   font-weight: 600;
   text-align: center;
   width: 80px;
   margin-right: 40px; /* 오른쪽 여백 조정 */
+  text-decoration: none;
 }
 
 .text-wrapper-2 {
-  color: #2d3134;
   font-size: 30px;
   font-weight: 700;
   white-space: nowrap;
