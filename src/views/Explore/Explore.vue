@@ -18,12 +18,18 @@
         </SelectButton>
       </div>
     </div>
+    <div class="contents">
+      <Map v-if="value.value=='Map'"></Map>
+      <Card v-else></Card>
+    </div>
+    
   </div>
 </template>
 <script setup>
 import shiba from '@/assets/img/shiba-inu-dog-lying-down.png'
 import SpeechBubble from '@/components/SpeechBubble.vue'
 import Map from './components/Map.vue';
+import Card from './components/Card.vue';
 import Select from './components/Select.vue';
 import SelectButton from 'primevue/selectbutton';
 import { ref } from 'vue';
@@ -88,6 +94,7 @@ img {
 .choice{
   margin-top: 25px;
   display: flex;
+  min-width: 750px;
 }
 .select{
   margin-left: 100px;
@@ -99,5 +106,11 @@ img {
 .p-selectbutton{
   width: 90px;
   height: 42px;
+}
+.contents{
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 50px;
 }
 </style>

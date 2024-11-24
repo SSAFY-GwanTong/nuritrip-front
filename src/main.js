@@ -9,6 +9,9 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import { definePreset } from '@primevue/themes'
 import 'primeicons/primeicons.css'
+import {useKakao} from 'vue3-kakao-maps/@utils'
+const {VITE_KAKAO_MAP_API_KEY} = import.meta.env
+useKakao(VITE_KAKAO_MAP_API_KEY)
 
 const app = createApp(App)
 

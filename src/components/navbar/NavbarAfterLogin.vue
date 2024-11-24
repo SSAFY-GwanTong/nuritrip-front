@@ -50,6 +50,7 @@ const level = ref(3)
   align-items: center; /* 세로 중앙 정렬 */
   padding: 0 10px; /* 좌우 패딩 추가 */
   border-bottom: 1px solid #dbdbdb;
+  background-color: white;
 }
 
 nav ul {
