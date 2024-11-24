@@ -20,7 +20,7 @@
     </div>
     <div class="contents">
       <Map v-if="value.value=='Map'"></Map>
-      <Card v-else></Card>
+      <Card v-else :data="data"></Card>
     </div>
     
   </div>
@@ -45,7 +45,6 @@ const options = ref([
   {icon: 'pi pi-map', value:'Map'},
   {icon: 'pi pi-th-large', value:'Card'}
 ])
-
 
 const cities = ref([
     { name: '서울특별시', code: 1 },
@@ -74,6 +73,19 @@ const attractions = ref([
     { name: '숙박', code: 32 },
     { name: '쇼핑', code: 38 },
     { name: '음식점', code: 39 },
+])
+
+const data = ref([
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
+  {img:'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg', name:'경포해변', addr: '강원 강릉시 강문동 산1-1', type: '관광지'},
 ])
 
 </script>
