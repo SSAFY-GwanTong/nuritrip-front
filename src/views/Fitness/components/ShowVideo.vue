@@ -1,7 +1,21 @@
 <template>
     <div class="contents">
-      <div class="video-container">
-        <video :src="videoSource" autoplay loop muted class="full-video"></video>
+      <div class="media-container">
+        <!-- 비디오 또는 이미지 조건부 렌더링 -->
+        <video
+          v-if="mediaType === 'video'"
+          :src="mediaSource"
+          autoplay
+          loop
+          muted
+          class="full-video"
+        ></video>
+        <img
+          v-else-if="mediaType === 'image'"
+          :src="mediaSource"
+          alt="운동 이미지"
+          class="full-image"
+        />
       </div>
       <button class="start-button" @click="startMeasurement">측정 시작</button>
     </div>
@@ -11,7 +25,8 @@
   import { defineProps, defineEmits } from 'vue'
   
   const props = defineProps({
-    videoSource: String, // 운동 영상 소스
+    mediaSource: String, // 운동 미디어 소스 (비디오 또는 이미지 URL)
+    mediaType: String, // 미디어 타입 ('video' 또는 'image')
   })
   const emit = defineEmits(['startMeasurement']) // 측정 시작 이벤트
   const startMeasurement = () => emit('startMeasurement')
@@ -26,11 +41,11 @@
     height: 100%; /* 부모 요소 크기 */
   }
   
-  .video-container {
+  .media-container {
     width: 100%;
     max-width: 800px; /* 최대 너비 설정 */
     display: flex;
-    justify-content: center; /* 비디오를 중앙에 배치 */
+    justify-content: center; /* 미디어를 중앙에 배치 */
   }
   
   .full-video {
@@ -39,8 +54,15 @@
     border-radius: 10px;
   }
   
+  .full-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: contain; /* 이미지가 비율을 유지하며 전체를 표시 */
+  }
+  
   .start-button {
-    margin-top: 20px; /* 버튼과 영상 사이의 간격 */
+    margin-top: 20px; /* 버튼과 미디어 사이의 간격 */
     padding: 10px 20px;
     background-color: #ff6347;
     color: white;

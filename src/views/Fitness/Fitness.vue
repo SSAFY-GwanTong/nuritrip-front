@@ -9,7 +9,8 @@
     <!-- 콘텐츠 영역 -->
     <component
       :is="currentComponent"
-      :video-source="currentExerciseData.source"
+      :media-source="currentExerciseData.source"
+      :media-type="currentExerciseData.type"
       :counter="counter"
       :circumference="circumference"
       :countdown="countdown"
@@ -36,10 +37,10 @@ const exercises = ref([
   { name: '스쿼트', type: 'video', source: 'https://ghwns82.github.io/tmp/squat.mp4' },
   { name: '버피', type: 'video', source: 'https://ghwns82.github.io/tmp/burpee.mp4' },
   { name: '싯업', type: 'video', source: 'https://ghwns82.github.io/tmp/situps.mp4' },
-  { name: '벤치 클라임', type: 'image', source: 'data:image/jpeg;base64,/9j/4AA...' },
+  { name: '벤치 클라임', type: 'image', source: 'https://ghwns82.github.io/tmp/img_diagnosis_01.png' },
 ])
 
-const pulseImage = 'data:image/jpeg;base64,/9j/4AA...'
+const pulseImage = 'https://ghwns82.github.io/tmp/img_diagnosis_01.png'
 const stage = ref('show-video')
 const currentExercise = ref(0)
 const counter = ref(0)

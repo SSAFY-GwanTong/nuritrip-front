@@ -24,21 +24,75 @@
           </svg>
           <div class="counter-number">{{ countdown }}</div>
         </div>
-        <div class="pulse-input">
+        <!-- 맥박 입력 필드 -->
+        <div v-if="countdown <= 0 && isInputVisible" class="pulse-input">
           <label for="pulse">맥박 입력:</label>
-          <input id="pulse" type="number" placeholder="맥박을 입력하세요" v-model="pulseInput" />
+          <input
+            id="pulse"
+            type="number"
+            placeholder="맥박을 입력하세요"
+            v-model="pulseInput"
+          />
         </div>
       </div>
     </div>
   </template>
   
   <script setup>
-  import { defineProps } from 'vue'
+  import { ref, onMounted } from 'vue'
   
   const props = defineProps({
-    countdown: Number,
     pulseImage: String,
     circumference: Number,
+  })
+  
+  // 카운트다운 및 맥박 입력 처리
+  const countdown = ref(5) // 초기값: 대기 시간 5초
+  const pulseInput = ref('') // 맥박 입력
+  const isInputVisible = ref(false) // 맥박 입력 필드 표시 여부
+  
+  // 타이머 관련 변수
+  let timer = null
+  let countdownTimer = null
+  
+  // 대기 시간 5초 후 카운트다운 시작
+  const startCountdown = () => {
+    console.log('5초 대기 시작')
+    countdown.value = 5
+    countdownTimer = setInterval(() => {
+      console.log(countdown.value)
+      countdown.value--
+      if (countdown.value < 0) {
+        clearInterval(countdownTimer)
+        startPulseMeasurement() // 60초 카운트다운 시작
+      }
+    }, 1000)
+  }
+  
+  // 60초 카운트다운 시작
+  const startPulseMeasurement = () => {
+    console.log('60초 카운트다운 시작')
+    countdown.value = 60 // 카운트다운 초기값 60초
+    timer = setInterval(() => {
+      countdown.value--
+      if (countdown.value < 0) {
+        clearInterval(timer)
+        countdown.value = 0
+        isInputVisible.value = true // 맥박 입력 필드 표시
+        console.log('카운트다운 완료. 맥박 입력 필드 활성화.')
+      }
+    }, 1000)
+  }
+  
+  // 컴포넌트가 마운트될 때 대기 시간 시작
+  onMounted(() => {
+    startCountdown()
+  })
+  
+  // 컴포넌트가 언마운트되기 전에 타이머 정리
+  onBeforeUnmount(() => {
+    if (timer) clearInterval(timer)
+    if (countdownTimer) clearInterval(countdownTimer)
   })
   </script>
   
