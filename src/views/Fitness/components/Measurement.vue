@@ -19,7 +19,7 @@
               r="50"
               fill="none"
               :stroke-dasharray="circumference"
-              :stroke-dashoffset="circumference - (counter / 10) * circumference"
+              :stroke-dashoffset="circumference - (currentCounter / 10) * circumference"
               stroke="#ff6347"
               stroke-width="10"
               stroke-linecap="round"
@@ -32,108 +32,164 @@
       </div>
     </div>
 
-    <!-- 아래쪽: 제한 시간 바 -->
+    <!-- 제한 시간 바 -->
     <div class="progress-bar-container">
       <div class="progress-bar" :style="{ width: `${timeProgress}%` }"></div>
     </div>
 
-    <!-- 제한 시간 표시 -->
+    <!-- 제한 시간 텍스트 -->
     <div class="remaining-time">{{ remainingTime }}초 남음</div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, defineEmits } from 'vue'
+import { ref, onMounted, onBeforeUnmount, defineProps, defineEmits } from 'vue';
 
-const emit = defineEmits(['nextExercise']) // 다음 화면 이벤트 emit
+// Props 정의
+const props = defineProps({
+  exerciseName: String, // 운동 이름
+  modelUrl: String, // Teachable Machine 모델 URL
+});
 
-const counter = ref(0) // 카운터 값
-const circumference = 2 * Math.PI * 50 // 원형 진행 바 둘레
-const timeProgress = ref(100) // 제한 시간 진행 바 초기값
-const duration = 10 // 제한 시간 (초)
-const countdown = ref(5) // 시작 전 대기 시간 (초)
-const remainingTime = ref(duration) // 남은 제한 시간
+const emit = defineEmits(['nextExercise']);
+const counter = ref(0);
+const currentCounter = ref(0);
+const circumference = 2 * Math.PI * 50;
+const timeProgress = ref(100);
+const duration = ref(60);
+const remainingTime = ref(duration.value);
 
-let model = null // Teachable Machine 모델
-let webcam = null // Teachable Machine 웹캠
-let canvasCtx = null // 캔버스 컨텍스트
-let timer = null // 제한 시간 타이머
-let countdownTimer = null // 대기 타이머
+let model = null;
+let webcam = null;
+let canvasCtx = null;
+let timer = null;
+
+// 제한 시간 설정
+const setDuration = () => {
+  if (props.exerciseName === '벤치 클라임') {
+    duration.value = 180;
+  } else {
+    duration.value = 60;
+  }
+  remainingTime.value = duration.value;
+};
 
 // Teachable Machine 초기화
 const initTeachableMachine = async () => {
   try {
-    const MODEL_URL = "https://teachablemachine.withgoogle.com/models/8VC6L_Qre/"
-    const modelURL = `${MODEL_URL}model.json`
-    const metadataURL = `${MODEL_URL}metadata.json`
-    model = await window.tmPose.load(modelURL, metadataURL)
+    const modelUrl = `${props.modelUrl}model.json`;
+    const metadataUrl = `${props.modelUrl}metadata.json`;
 
-    const size = 300
-    webcam = new window.tmPose.Webcam(size, size, true) // flip: true
-    await webcam.setup()
-    await webcam.play()
+    console.log('전달된 모델 URL:', modelUrl);
 
-    const canvas = document.getElementById("canvas")
-    canvas.width = size
-    canvas.height = size
-    canvasCtx = canvas.getContext("2d")
+    model = await window.tmPose.load(modelUrl, metadataUrl);
 
-    startCountdown() // 대기 타이머 시작
+    const size = 300;
+    webcam = new window.tmPose.Webcam(size, size, true); // flip: true
+    await webcam.setup();
+    await webcam.play();
+
+    const canvas = document.getElementById('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    canvasCtx = canvas.getContext('2d');
+
+    startTimer(); // 제한 시간 시작
+    window.requestAnimationFrame(loop); // 루프 시작
   } catch (error) {
-    console.error("Teachable Machine 초기화 실패:", error)
+    console.error('Teachable Machine 초기화 실패:', error);
   }
-}
+};
+let status = "";
 
-// 5초 대기
-const startCountdown = () => {
-  countdownTimer = setInterval(() => {
-    countdown.value--
-    if (countdown.value <= 0) {
-      clearInterval(countdownTimer)
-      startExercise() // 제한 시간 시작
+// 예측 및 조건 만족 시 카운터 증가
+const predict = async () => {
+  if (!model || !webcam) return;
+
+  const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
+  const prediction = await model.predict(posenetOutput);
+  
+  // 예측 결과가 특정 조건을 만족할 경우 카운터 증가
+  if (prediction[0].probability.toFixed(2) === "1.00") {
+    if (status === prediction[1].className){
+      incrementCounter();
     }
-  }, 1000)
-}
+    status = prediction[0].className
+  }else if (prediction[1].probability.toFixed(2) === "1.00") {
+                status = prediction[1].className;
+            }
+ 
 
-// 제한 시간 및 예측 시작
-const startExercise = () => {
-  const totalTicks = duration * 10
-  let currentTick = 0
+  drawPose(pose);
+};
+
+// 루프
+const loop = async () => {
+  webcam.update(); // 웹캠 업데이트
+  await predict(); // 예측 실행
+  window.requestAnimationFrame(loop); // 다음 루프 호출
+};
+
+// 포즈 그리기
+const drawPose = (pose) => {
+  if (canvasCtx && webcam.canvas) {
+    canvasCtx.drawImage(webcam.canvas, 0, 0);
+    if (pose) {
+      const minPartConfidence = 0.5;
+      window.tmPose.drawKeypoints(pose.keypoints, minPartConfidence, canvasCtx);
+      window.tmPose.drawSkeleton(pose.keypoints, minPartConfidence, canvasCtx);
+    }
+  }
+};
+
+// 카운터 증가
+const incrementCounter = () => {
+  counter.value++;
+  currentCounter.value++;
+  if (currentCounter.value >= 10) {
+    currentCounter.value = 0; // 화면 카운터 초기화
+  }
+};
+
+// 키보드 이벤트 핸들러
+const handleKeydown = (event) => {
+  if (event.key === '7') {
+    incrementCounter(); // 숫자 7 입력 시 카운터 증가
+  } else if (event.key === '9') {
+    emit('nextExercise', counter.value); // 숫자 9 입력 시 다음 운동으로 이동
+  }
+};
+
+// 제한 시간 타이머 시작
+const startTimer = () => {
+  const totalTicks = duration.value * 10;
+  let currentTick = 0;
 
   timer = setInterval(() => {
-    currentTick++
-    timeProgress.value = 100 - (currentTick / totalTicks) * 100 // 진행 바 반대로 감소
-    remainingTime.value = Math.ceil(duration - (currentTick / 10)) // 남은 시간 갱신
+    currentTick++;
+    timeProgress.value = 100 - (currentTick / totalTicks) * 100;
+    remainingTime.value = Math.ceil(duration.value - currentTick / 10);
 
     if (currentTick >= totalTicks) {
-      clearInterval(timer)
-      stopExercise() // 제한 시간 종료
+      clearInterval(timer);
+      emit('nextExercise', counter.value); // 제한 시간 종료 시 부모에 카운터 전달
     }
-  }, 100)
-}
+  }, 100);
+};
 
-// 제한 시간 종료 시 실행
-const stopExercise = () => {
-  emit('nextExercise') // 다음 화면으로 이동
-}
-
-// 컴포넌트가 마운트될 때 실행
+// 컴포넌트 마운트 시 Teachable Machine 초기화 및 이벤트 바인딩
 onMounted(async () => {
-  await initTeachableMachine()
-})
+  setDuration();
+  document.addEventListener('keydown', handleKeydown); // 키보드 이벤트 추가
+  await initTeachableMachine();
+});
 
-// 컴포넌트가 언마운트되기 전에 실행
+// 컴포넌트 언마운트 시 자원 정리 및 이벤트 제거
 onBeforeUnmount(() => {
-  if (webcam) {
-    webcam.stop()
-  }
-  if (timer) {
-    clearInterval(timer)
-  }
-  if (countdownTimer) {
-    clearInterval(countdownTimer)
-  }
-})
+  if (webcam) webcam.stop();
+  if (timer) clearInterval(timer);
+  document.removeEventListener('keydown', handleKeydown); // 키보드 이벤트 제거
+});
 </script>
 
 <style scoped>
@@ -201,7 +257,7 @@ onBeforeUnmount(() => {
   color: #666;
 }
 
-/* 진행 바 */
+/* 제한 시간 바 */
 .progress-bar-container {
   margin-top: 20px;
   height: 10px;
