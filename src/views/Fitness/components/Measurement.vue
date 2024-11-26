@@ -19,20 +19,23 @@
               r="50"
               fill="none"
               :stroke-dasharray="circumference"
-              :stroke-dashoffset="circumference - ((counter % 10) / 10) * circumference"
+              :stroke-dashoffset="circumference - (counter / 10) * circumference"
               stroke="#ff6347"
               stroke-width="10"
               stroke-linecap="round"
             />
           </svg>
-          <div class="counter-number">{{ counter }}</div>
+          <div class="counter-number">
+            {{ counter }} <span class="small">개</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 아래쪽: 남은 시간을 표시하는 직선 바 -->
+    <!-- 아래쪽: 제한 시간 표시 -->
     <div class="progress-bar-container">
-      <div class="progress-bar" :style="{ width: `${progress}%` }"></div>
+      <div class="progress-bar" :style="{ width: `${timeProgress}%` }"></div>
+      <div class="remaining-time">{{ remainingTime }}초 남음</div>
     </div>
   </div>
 </template>
@@ -40,108 +43,141 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, defineEmits } from 'vue'
 
-const emit = defineEmits(['nextExercise'])
+const emit = defineEmits(['nextExercise']) // 다음 화면 이벤트 emit
 
-const counter = ref(0)
-const circumference = 2 * Math.PI * 50
-const progress = ref(100) // 진행률 초기값 (100%)
-const duration = 1000 // 진행 시간 (초)
-const interval = 100 // 업데이트 간격 (ms)
+const counter = ref(0) // 카운터 값
+const circumference = 2 * Math.PI * 50 // 원형 진행 바 둘레
+const timeProgress = ref(100) // 제한 시간 진행 바 초기값 (100%에서 시작)
+const duration = 10 // 제한 시간 (초)
+const countdown = ref(5) // 시작 전 대기 시간 (초)
+const remainingTime = ref(duration) // 남은 제한 시간
 
-let model = null
-let webcam = null
-let canvasCtx = null
-let timer = null
-let countdownTimer = null
-
-// 외부 스크립트 로드 함수
-const loadScript = (src) => {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) {
-      resolve() // 이미 로드된 경우
-    } else {
-      const script = document.createElement('script')
-      script.src = src
-      script.onload = resolve
-      script.onerror = reject
-      document.head.appendChild(script)
-    }
-  })
-}
+let model = null // Teachable Machine 모델
+let webcam = null // Teachable Machine 웹캠
+let canvasCtx = null // 캔버스 컨텍스트
+let maxPredictions = 0 // 예측 클래스 수
+let status = "stand" // 현재 상태
+let timer = null // 제한 시간 타이머
+let countdownTimer = null // 대기 타이머
 
 // Teachable Machine 초기화
 const initTeachableMachine = async () => {
-  console.log('initTeachableMachine')
   try {
-    const MODEL_URL = 'https://teachablemachine.withgoogle.com/models/8VC6L_Qre/'
+    const MODEL_URL = "https://teachablemachine.withgoogle.com/models/8VC6L_Qre/"
     const modelURL = `${MODEL_URL}model.json`
     const metadataURL = `${MODEL_URL}metadata.json`
+    model = await window.tmPose.load(modelURL, metadataURL)
 
-    model = await tmPose.load(modelURL, metadataURL)
+    maxPredictions = model.getTotalClasses()
 
     const size = 300
-    webcam = new tmPose.Webcam(size, size, true) // flip: true
+    webcam = new window.tmPose.Webcam(size, size, true) // flip: true
     await webcam.setup()
     await webcam.play()
 
-    const canvas = document.getElementById('canvas')
+    const canvas = document.getElementById("canvas")
     canvas.width = size
     canvas.height = size
-    canvasCtx = canvas.getContext('2d')
+    canvasCtx = canvas.getContext("2d")
 
-    startCountdown() // 5초 대기 시작
+    startCountdown() // 대기 타이머 시작
   } catch (error) {
-    console.error('Teachable Machine 초기화 실패:', error)
+    console.error("Teachable Machine 초기화 실패:", error)
   }
 }
 
 // 5초 대기
 const startCountdown = () => {
-  let countdown = 5
-  console.log('웹캠 초기화 완료. 5초 대기 시작.')
   countdownTimer = setInterval(() => {
-    console.log(countdown)
-    countdown--
-    if (countdown < 0) {
+    countdown.value--
+    if (countdown.value <= 0) {
       clearInterval(countdownTimer)
-      startProgressBar() // 진행 바 시작
+      startExercise() // 제한 시간 시작
     }
   }, 1000)
 }
 
-// 진행 바 시작
-const startProgressBar = () => {
-  const totalTicks = (duration * 1000) / interval
+// 제한 시간 및 예측 시작
+const startExercise = () => {
+  // 제한 시간 진행 바 초기화
+  const totalTicks = duration * 10
   let currentTick = 0
 
-  console.log('진행 바 시작.')
+  // 제한 시간 타이머 시작
   timer = setInterval(() => {
     currentTick++
-    progress.value = 100 - (currentTick / totalTicks) * 100 // 진행 바 감소 방향
+    timeProgress.value = 100 - (currentTick / totalTicks) * 100 // 반대 방향 감소
+    remainingTime.value = Math.ceil(duration - (currentTick / 10)) // 남은 시간 계산
 
     if (currentTick >= totalTicks) {
       clearInterval(timer)
-      emit('nextExercise') // 다음 운동으로 이동
+      stopExercise() // 제한 시간 종료
     }
-  }, interval)
+  }, 100)
+
+  // 예측 루프 시작
+  window.requestAnimationFrame(loop)
+}
+
+// 제한 시간 종료 시 실행
+const stopExercise = () => {
+  console.log("운동 종료, 다음 단계로 이동")
+  emit('nextExercise') // 다음 화면으로 이동
+}
+
+// 웹캠 루프
+const loop = async () => {
+  if (webcam) {
+    webcam.update()
+    await predict()
+    window.requestAnimationFrame(loop)
+  }
+}
+
+// 예측 및 카운터 업데이트
+const predict = async () => {
+  const { pose, posenetOutput } = await model.estimatePose(webcam.canvas)
+  const prediction = await model.predict(posenetOutput)
+
+  // 특정 조건 만족 시 카운터 증가
+  if (prediction[0].probability > 0.9) {
+    if (status === "complete") {
+      increaseCounter()
+      status = "stand"
+    }
+  } else if (prediction[1].probability === 1.0) {
+    status = "complete"
+  }
+
+  drawPose(pose)
+}
+
+// 포즈 그리기
+const drawPose = (pose) => {
+  if (webcam.canvas) {
+    canvasCtx.drawImage(webcam.canvas, 0, 0)
+    if (pose) {
+      const minPartConfidence = 0.5
+      window.tmPose.drawKeypoints(pose.keypoints, minPartConfidence, canvasCtx)
+      window.tmPose.drawSkeleton(pose.keypoints, minPartConfidence, canvasCtx)
+    }
+  }
+}
+
+// 카운터 증가
+const increaseCounter = () => {
+  counter.value = (counter.value % 10) + 1 // 11이면 다시 1부터 시작
 }
 
 // 컴포넌트가 마운트될 때 실행
 onMounted(async () => {
-  try {
-    await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js')
-    await loadScript('https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js')
-    await initTeachableMachine()
-  } catch (error) {
-    console.error('외부 스크립트 로드 실패:', error)
-  }
+  await initTeachableMachine()
 })
 
 // 컴포넌트가 언마운트되기 전에 실행
 onBeforeUnmount(() => {
   if (webcam) {
-    webcam.pause()
-    console.log('webcam.pause')
+    webcam.stop()
   }
   if (timer) {
     clearInterval(timer)
@@ -169,7 +205,7 @@ onBeforeUnmount(() => {
 }
 
 .webcam {
-  width: 300px; /* 크기 조정 */
+  width: 300px;
   height: auto;
   border-radius: 10px;
   background-color: #000; /* 웹캠 미사용 시 빈 화면 */
@@ -212,6 +248,11 @@ onBeforeUnmount(() => {
   color: #333;
 }
 
+.counter-number .small {
+  font-size: 16px;
+  color: #666;
+}
+
 /* 진행 바 */
 .progress-bar-container {
   margin-top: 20px;
@@ -219,11 +260,19 @@ onBeforeUnmount(() => {
   background-color: #eee;
   border-radius: 5px;
   overflow: hidden;
+  position: relative;
 }
 
 .progress-bar {
   height: 100%;
   background-color: #ff6347;
   transition: width 0.1s linear;
+}
+
+.remaining-time {
+  margin-top: 5px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
 }
 </style>
