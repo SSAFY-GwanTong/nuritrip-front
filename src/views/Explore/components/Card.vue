@@ -1,22 +1,23 @@
 <template>
   <div class="cards">
-    <div v-for="info in data" :key="info.name" class="card" @click="showDetail(info)">
+    <div v-for="info in data" :key="info.contentId" class="card" @click="showDetail(info)">
       <div class="attraction-img">
-        <img :src="info.img" alt="" />
+        <img v-if="info.img" :src="info.img" alt="" />
+        <img v-else src="https://img.freepik.com/free-psd/3d-rendering-travel-still-life_23-2151799375.jpg?ga=GA1.1.624011667.1732600568&semt=ais_hybrid" alt="">
         <div class="icon">
           <i class="pi pi-heart"></i>
         </div>
       </div>
       <div>
-        <p class="attraction-name">{{ info.name }}</p>
+        <p class="attraction-name">{{ info.title }}</p>
         <div class="attraction-info">
           <div class="text-wrapper">
             <i class="pi pi-map-marker"></i>
-            <p>{{ info.addr }}</p>
+            <p>{{ info.address1 }} {{ info.address2 }}</p>
           </div>
           <div class="text-wrapper">
             <i class="pi pi-tag"></i>
-            <p>{{ info.type }}</p>
+            <p>{{ info.contentType }}</p>
           </div>
         </div>
       </div>
@@ -32,7 +33,6 @@ defineProps({
 
 const emit = defineEmits(['card-click'])
 const showDetail = (info) => {
-  console.log('click')
   emit('card-click', info)
 }
 </script>
@@ -42,7 +42,8 @@ const showDetail = (info) => {
   flex-direction: row;
   flex-wrap: wrap;
   max-width: 88%;
-  justify-content: space-between;
+  margin-left: 30px;
+  justify-content: flex-start;
 }
 .card {
   margin-left: 20px;
@@ -80,6 +81,10 @@ img {
 p {
   margin: 0;
   padding: 0;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .attraction-name {
   font-weight: 700;

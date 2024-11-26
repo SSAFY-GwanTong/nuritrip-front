@@ -9,7 +9,7 @@
 </template>
 <script setup>
 import Select from 'primevue/select'
-import { ref } from 'vue'
+import { ref, defineEmits, watch } from 'vue'
 const props = defineProps({
   options: {
     Type: Object,
@@ -18,7 +18,13 @@ const props = defineProps({
     Type: String,
   },
 })
+const emit = defineEmits(['update'])
 const selected = ref(null)
+
+watch(selected, (newValue) => {
+  emit('update', newValue)
+})
+
 </script>
 <style scoped>
 .p-select {
