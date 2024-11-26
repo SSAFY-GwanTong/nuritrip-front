@@ -15,10 +15,12 @@
 <script setup>
 import SpeechBubble from '@/components/SpeechBubble.vue'
 import shiba from '@/assets/img/shiba-inu-dog-praying.png'
-import { ref } from 'vue'
-const name = ref('홍길동')
+import { useRouter } from 'vue-router';
+
+const{name} = history.state
+
 const guideContents = [
-  `안녕하세요! ${name.value} 님의 여행 매니저 누리입니다.`,
+  `안녕하세요! ${name} 님의 여행 매니저 누리입니다.`,
   '무엇을 도와드릴까요?',
 ]
 const choices = ['체력 측정하기', '여행 계획 세우기', '여행지 살펴보기', '내 여행 계획 보관함 가기']

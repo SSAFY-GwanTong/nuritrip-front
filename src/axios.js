@@ -1,16 +1,18 @@
 import axios from 'axios'
-import store from "./store/index";
-import router from './router/index';
+import { useAuthStore } from '@/stores/index';
+import router from './router';
 
 //Axios 인스턴스 생성 및 기본 설정
 const axiosInstance = axios.create({
-    baseURL : "http://localhost:8080"
+    baseURL : "http://localhost:8080/api"
 
 })
 
 axiosInstance.interceptors.request.use(
+    
     (config) => {
-        let access_token = store.state.userStore.jwtToken;
+        const store = useAuthStore();
+        const access_token = store.jwtToken;
         if (access_token){
             config.headers.Authorization = `Bearer ${access_token}`;
         }
@@ -26,7 +28,7 @@ axiosInstance.interceptors.response.use(
     (error) => {
         if(error.response) {
             const status = error.response.status;
-            if (status === 401){
+            if (status === 401 && error.response.data.requestURI){
                 console.error('401 Unauthorized');
                 router.push(`${error.response.data.requestURI}`);
             } else{

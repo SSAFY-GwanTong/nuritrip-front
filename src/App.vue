@@ -3,7 +3,7 @@
     <LogoLogin v-if="['SignIn'].includes($route.name) == true"></LogoLogin>
     <LogoSignUp v-else-if="['SignUp'].includes($route.name) == true"></LogoSignUp>
     <NavbarBeforeLogin v-else-if="['HomeView'].includes($route.name) == true"></NavbarBeforeLogin>
-    <NavbarAfterLogin v-else></NavbarAfterLogin>
+    <NavbarAfterLogin @set-name="setName" v-else></NavbarAfterLogin>
     <RouterView></RouterView>
   </div>
 </template>
@@ -13,6 +13,12 @@ import NavbarBeforeLogin from './components/navbar/NavbarBeforeLogin.vue'
 import LogoLogin from './components/navbar/LogoLogin.vue'
 import LogoSignUp from './components/navbar/LogoSignUp.vue';
 import NavbarAfterLogin from './components/navbar/NavbarAfterLogin.vue'
+import { ref } from 'vue';
+const name = ref('')
+const setName = (value) => {
+  name.value = value;
+}
+
 </script>
 
 <style>
