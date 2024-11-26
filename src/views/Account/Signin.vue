@@ -6,10 +6,13 @@
         <div class="group">
           <div class="overlap-group">
             <div class="title">로그인</div>
-            <InputBox content="아이디"></InputBox>
-            <InputBox content="비밀번호"></InputBox>
-            <div class="text-wrapper">Forgot password?</div>
-            <button class="button">
+            <InputBox type="id" content="아이디" @update-input="handleInputUpdate"></InputBox>
+            <InputBox type="password" content="비밀번호" @update-input="handleInputUpdate"></InputBox>
+            <div class="text-wrapper">
+              <RouterLink to="/signup" class="register">회원가입</RouterLink>
+              <p>Forgot password?</p>
+            </div>
+            <button class="button" @click="login">
               <div class="publish">로그인</div>
             </button>
           </div>
@@ -22,6 +25,45 @@
 <script setup>
 import InputBox from '@/views/Account/components/InputBox.vue'
 import BgImg from '@/assets/img/cover1.png'
+import { ref } from 'vue';
+import { axiosInstance } from '@/axios.js';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/index.js';
+
+const router = useRouter();
+const store = useAuthStore();
+
+const id = ref('')
+const password = ref('')
+const handleInputUpdate = (data) => {
+  if(data.type === "id"){
+    id.value = data.value;
+  }else if(data.type === "password"){
+    password.value = data.value;
+  }
+}
+
+const login = () => {
+  const params = {
+    id: id.value, 
+    password: password.value, 
+  }
+  axiosInstance.post(`/auth/signin`, params)
+    .then((res) => {
+      if(res.data.isSuccess === true){
+        const data = res.data.result
+        store.setJwtToken(data.jwtToken)
+        router.push({path: '/home', state:{name: data.name}})
+      }else{
+        alert("로그인 실패!")
+      }
+    })
+    .catch((err) => {
+      alert("로그인 실패!")
+    })
+}
+
+
 </script>
 
 <style scoped>
@@ -62,16 +104,23 @@ import BgImg from '@/assets/img/cover1.png'
 }
 
 .signin .text-wrapper {
-  color: #ac68f7;
+  display: flex;
   font-family: 'Red Hat Display-Medium', Helvetica;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
   line-height: normal;
   text-align: right;
-  text-decoration: underline;
-  width: 416px;
+  width: 393px;
+  margin-right: 20px;
   margin-top: 10px;
+  justify-content: space-between;
+}
+.text-wrapper p, .register{
+  margin: 0;
+  color: #ac68f7;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .signin .title {
@@ -91,8 +140,10 @@ import BgImg from '@/assets/img/cover1.png'
   border-radius: 10px;
   box-sizing: border-box;
   height: 46px;
-  width: 416px;
+  width: 393px;
+  margin-right: 20px;
   margin-top: 90px;
+  cursor: pointer;
 }
 
 .signin .publish {
