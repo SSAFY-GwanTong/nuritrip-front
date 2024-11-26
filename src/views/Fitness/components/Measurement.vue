@@ -1,0 +1,227 @@
+<template>
+  <div>
+    <!-- 콘텐츠 영역 -->
+    <div class="contents">
+      <!-- 왼쪽: 웹캠 -->
+      <div class="webcam-container">
+        <canvas id="canvas" class="webcam"></canvas>
+      </div>
+
+      <!-- 오른쪽: 카운터 -->
+      <div class="counter-section">
+        <div class="progress-circle">
+          <svg class="circle" width="120" height="120">
+            <circle class="background" cx="60" cy="60" r="50" fill="none" stroke="#eee" stroke-width="10" />
+            <circle
+              class="progress"
+              cx="60"
+              cy="60"
+              r="50"
+              fill="none"
+              :stroke-dasharray="circumference"
+              :stroke-dashoffset="circumference - (counter / 10) * circumference"
+              stroke="#ff6347"
+              stroke-width="10"
+              stroke-linecap="round"
+            />
+          </svg>
+          <div class="counter-number">
+            {{ counter }} <span class="small">개</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 아래쪽: 제한 시간 바 -->
+    <div class="progress-bar-container">
+      <div class="progress-bar" :style="{ width: `${timeProgress}%` }"></div>
+    </div>
+
+    <!-- 제한 시간 표시 -->
+    <div class="remaining-time">{{ remainingTime }}초 남음</div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, onBeforeUnmount, defineEmits } from 'vue'
+
+const emit = defineEmits(['nextExercise']) // 다음 화면 이벤트 emit
+
+const counter = ref(0) // 카운터 값
+const circumference = 2 * Math.PI * 50 // 원형 진행 바 둘레
+const timeProgress = ref(100) // 제한 시간 진행 바 초기값
+const duration = 10 // 제한 시간 (초)
+const countdown = ref(5) // 시작 전 대기 시간 (초)
+const remainingTime = ref(duration) // 남은 제한 시간
+
+let model = null // Teachable Machine 모델
+let webcam = null // Teachable Machine 웹캠
+let canvasCtx = null // 캔버스 컨텍스트
+let timer = null // 제한 시간 타이머
+let countdownTimer = null // 대기 타이머
+
+// Teachable Machine 초기화
+const initTeachableMachine = async () => {
+  try {
+    const MODEL_URL = "https://teachablemachine.withgoogle.com/models/8VC6L_Qre/"
+    const modelURL = `${MODEL_URL}model.json`
+    const metadataURL = `${MODEL_URL}metadata.json`
+    model = await window.tmPose.load(modelURL, metadataURL)
+
+    const size = 300
+    webcam = new window.tmPose.Webcam(size, size, true) // flip: true
+    await webcam.setup()
+    await webcam.play()
+
+    const canvas = document.getElementById("canvas")
+    canvas.width = size
+    canvas.height = size
+    canvasCtx = canvas.getContext("2d")
+
+    startCountdown() // 대기 타이머 시작
+  } catch (error) {
+    console.error("Teachable Machine 초기화 실패:", error)
+  }
+}
+
+// 5초 대기
+const startCountdown = () => {
+  countdownTimer = setInterval(() => {
+    countdown.value--
+    if (countdown.value <= 0) {
+      clearInterval(countdownTimer)
+      startExercise() // 제한 시간 시작
+    }
+  }, 1000)
+}
+
+// 제한 시간 및 예측 시작
+const startExercise = () => {
+  const totalTicks = duration * 10
+  let currentTick = 0
+
+  timer = setInterval(() => {
+    currentTick++
+    timeProgress.value = 100 - (currentTick / totalTicks) * 100 // 진행 바 반대로 감소
+    remainingTime.value = Math.ceil(duration - (currentTick / 10)) // 남은 시간 갱신
+
+    if (currentTick >= totalTicks) {
+      clearInterval(timer)
+      stopExercise() // 제한 시간 종료
+    }
+  }, 100)
+}
+
+// 제한 시간 종료 시 실행
+const stopExercise = () => {
+  emit('nextExercise') // 다음 화면으로 이동
+}
+
+// 컴포넌트가 마운트될 때 실행
+onMounted(async () => {
+  await initTeachableMachine()
+})
+
+// 컴포넌트가 언마운트되기 전에 실행
+onBeforeUnmount(() => {
+  if (webcam) {
+    webcam.stop()
+  }
+  if (timer) {
+    clearInterval(timer)
+  }
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+  }
+})
+</script>
+
+<style scoped>
+.contents {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+/* 웹캠 */
+.webcam-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.webcam {
+  width: 300px;
+  height: auto;
+  border-radius: 10px;
+  background-color: #000;
+}
+
+/* 카운터 */
+.counter-section {
+  flex: 0.3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.progress-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.circle {
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.background {
+  opacity: 0.3;
+}
+
+.progress {
+  transition: stroke-dashoffset 0.3s ease-in-out;
+}
+
+.counter-number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.counter-number .small {
+  font-size: 16px;
+  color: #666;
+}
+
+/* 진행 바 */
+.progress-bar-container {
+  margin-top: 20px;
+  height: 10px;
+  background-color: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #ff6347;
+  transition: width 0.1s linear;
+}
+
+/* 제한 시간 텍스트 */
+.remaining-time {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #000;
+}
+</style>
