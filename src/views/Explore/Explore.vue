@@ -7,9 +7,9 @@
     </div>
     <div class="choice">
       <div class="select">
-        <Select :options="cities" content="시/도 선택"></Select>
-        <Select :options="districts" content="구/군 선택"></Select>
-        <Select :options="attractions" content="관광지 유형"></Select>
+        <Select @update="handleSelectedCity" :options="cities" content="시/도 선택"></Select>
+        <Select @update="getAttractions" :options="districts" content="구/군 선택"></Select>
+        <Select @update="getAttractions" :options="attractions" content="관광지 유형"></Select>
       </div>
       <div class="options">
         <SelectButton
@@ -39,7 +39,8 @@ import Card from './components/Card.vue'
 import Select from './components/Select.vue'
 import SelectButton from 'primevue/selectbutton'
 import Detail from './Detail.vue'
-import { ref } from 'vue'
+import { axiosInstance } from '@/axios'
+import { ref, onBeforeUnmount, onMounted } from 'vue'
 const guideContents = [
   '원하는 지역을 선택하고 어떤 관광지가 있는지 살펴보세요!',
   '지도 형식과 카드 형식 2가지로 볼 수 있습니다.',
@@ -52,6 +53,33 @@ const options = ref([
   { icon: 'pi pi-map', value: 'Map' },
   { icon: 'pi pi-th-large', value: 'Card' },
 ])
+
+const selectedCity = ref()
+const selectedDistrict = ref()
+const selectedAttraction = ref()
+const data = ref([])
+
+const currentPage = ref(1);
+const pageSize = ref(15);
+
+const handleScroll = () => {
+  const scrollTop = window.scrollY;
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+
+  // 페이지의 끝에 도달했을 때
+  if (scrollTop + windowHeight >= documentHeight - 100) {
+    loadMoreData();
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 
 const cities = ref([
   { name: '서울특별시', code: 1 },
@@ -69,7 +97,7 @@ const cities = ref([
 const districts = ref([{ name: '' }])
 
 const attractions = ref([
-  { name: '전체', code: 1 },
+  { name: '전체', code: null },
   { name: '관광지', code: 12 },
   { name: '문화시설', code: 14 },
   { name: '축제공연행사', code: 15 },
@@ -79,74 +107,48 @@ const attractions = ref([
   { name: '쇼핑', code: 38 },
   { name: '음식점', code: 39 },
 ])
-
-const data = ref([
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-    content:
-      '경포해변은 강원도 강릉시에 위치한 아름다운 해변으로, 맑고 푸른 바다와 고운 모래사장이 어우러져 있어 여름철에 많은 관광객들이 찾는 인기 명소입니다. 이곳은 일출과 일몰이 특히 아름다워 사진 촬영지로도 유명하며, 수영, 서핑, 제트스키 등 다양한 수상 스포츠를 즐길 수 있는 시설이 마련되어 있습니다. 해변 주변에는 음식점과 카페, 숙박시설이 있어 편리하게 이용할 수 있으며, 여름철에는 다양한 문화 행사와 축제가 열려 활기찬 분위기를 더합니다. 또한, 경포대와 강릉커피거리 등 인근 관광 명소와 함께 방문하면 더욱 풍성한 여행 경험을 할 수 있습니다.',
-    call: '0507-1230-4901',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-    content:
-      '경포해변은 강원도 강릉시에 위치한 아름다운 해변으로, 맑고 푸른 바다와 고운 모래사장이 어우러져 있어 여름철에 많은 관광객들이 찾는 인기 명소입니다. 이곳은 일출과 일몰이 특히 아름다워 사진 촬영지로도 유명하며, 수영, 서핑, 제트스키 등 다양한 수상 스포츠를 즐길 수 있는 시설이 마련되어 있습니다. 해변 주변에는 음식점과 카페, 숙박시설이 있어 편리하게 이용할 수 있으며, 여름철에는 다양한 문화 행사와 축제가 열려 활기찬 분위기를 더합니다. 또한, 경포대와 강릉커피거리 등 인근 관광 명소와 함께 방문하면 더욱 풍성한 여행 경험을 할 수 있습니다.',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-  {
-    img: 'https://cdn.gwnews.org/news/photo/202004/200397_200533_5910.jpg',
-    name: '경포해변',
-    addr: '강원 강릉시 강문동 산1-1',
-    type: '관광지',
-  },
-])
+const loadMoreData = () => {
+  let url = `attractions?page_size=${pageSize.value}&offset=${(currentPage.value -1)*pageSize.value}&`
+  if(selectedCity.value) url+=`sido=${selectedCity.value}&`
+  if(selectedDistrict.value) url+=`gugun=${selectedDistrict.value}&`
+  if(selectedAttraction.value) url+=`content=${selectedAttraction.value}`
+  axiosInstance.get(url)
+    .then((res) => {
+      data.value.push(...res.data.result);
+      currentPage.value++;
+    })
+}
+const getAttractions = (option) => {
+  changeValue(option)
+  currentPage.value = 1;
+  let url = `attractions?page_size=${pageSize.value}&offset=${(currentPage.value -1)*pageSize.value}&`
+  if(selectedCity.value) url+=`sido=${selectedCity.value}&`
+  if(selectedDistrict.value) url+=`gugun=${selectedDistrict.value}&`
+  if(selectedAttraction.value) url+=`content=${selectedAttraction.value}`
+  axiosInstance.get(url)
+    .then((res) => {
+      data.value = res.data.result;
+      currentPage.value++;
+    })
+}
+const changeValue = (option) => {
+  if(option!= null){
+    if(option.hasOwnProperty('gugunCode')){
+      selectedDistrict.value = option.gugunCode;
+    }else {
+      selectedAttraction.value = option.code;
+    }
+  }
+  
+}
+const handleSelectedCity = (city) => {
+  selectedCity.value = city.code;
+  axiosInstance.get(`attractions/guguns?sido=${city.code}`)
+    .then((res) => {
+      districts.value = res.data.result;
+    })
+  getAttractions(null);
+}
 
 const cardInfo = ref(null)
 const showDetail = (info) => {
