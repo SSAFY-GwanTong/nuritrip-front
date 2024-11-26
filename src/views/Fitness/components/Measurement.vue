@@ -43,101 +43,96 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, defineEmits, defineProps } from 'vue';
+import { ref, onMounted, onBeforeUnmount, defineProps, defineEmits } from 'vue';
 
 // Props 정의
 const props = defineProps({
-  exerciseName: String, // 운동 이름 전달받음
+  exerciseName: String, // 운동 이름
+  modelUrl: String, // Teachable Machine 모델 URL
 });
 
-const emit = defineEmits(['nextExercise']); // 부모에게 전달할 이벤트 정의
-const counter = ref(0); // 전체 카운터 값 (누적 증가)
-const currentCounter = ref(0); // 화면에 표시될 10단위 카운터
-const circumference = 2 * Math.PI * 50; // 원형 진행 바 둘레
-const timeProgress = ref(100); // 제한 시간 진행 바
-const duration = ref(60); // 제한 시간 (초), 기본값은 1분
-const remainingTime = ref(duration.value); // 남은 시간 (초)
+const emit = defineEmits(['nextExercise']);
+const counter = ref(0);
+const currentCounter = ref(0);
+const circumference = 2 * Math.PI * 50;
+const timeProgress = ref(100);
+const duration = ref(60);
+const remainingTime = ref(duration.value);
 
-let model = null; // Teachable Machine 모델
-let webcam = null; // Teachable Machine 웹캠
-let canvasCtx = null; // 캔버스 컨텍스트
-let timer = null; // 제한 시간 타이머
+let model = null;
+let webcam = null;
+let canvasCtx = null;
+let timer = null;
 
-// 운동에 따라 제한 시간 설정
+// 제한 시간 설정
 const setDuration = () => {
   if (props.exerciseName === '벤치 클라임') {
-    duration.value = 180; // 3분
+    duration.value = 180;
   } else {
-    duration.value = 60; // 1분
+    duration.value = 60;
   }
-  remainingTime.value = duration.value; // 남은 시간 초기화
+  remainingTime.value = duration.value;
 };
 
 // Teachable Machine 초기화
 const initTeachableMachine = async () => {
   try {
-    const MODEL_URL = "https://teachablemachine.withgoogle.com/models/8VC6L_Qre/";
-    const modelURL = `${MODEL_URL}model.json`;
-    const metadataURL = `${MODEL_URL}metadata.json`;
+    const modelUrl = `${props.modelUrl}model.json`;
+    const metadataUrl = `${props.modelUrl}metadata.json`;
 
-    model = await window.tmPose.load(modelURL, metadataURL);
+    console.log('전달된 모델 URL:', modelUrl);
+
+    model = await window.tmPose.load(modelUrl, metadataUrl);
 
     const size = 300;
     webcam = new window.tmPose.Webcam(size, size, true); // flip: true
     await webcam.setup();
     await webcam.play();
 
-    const canvas = document.getElementById("canvas");
+    const canvas = document.getElementById('canvas');
     canvas.width = size;
     canvas.height = size;
-    canvasCtx = canvas.getContext("2d");
+    canvasCtx = canvas.getContext('2d');
 
     startTimer(); // 제한 시간 시작
     window.requestAnimationFrame(loop); // 루프 시작
   } catch (error) {
-    console.error("Teachable Machine 초기화 실패:", error);
+    console.error('Teachable Machine 초기화 실패:', error);
   }
 };
-
-// 제한 시간 타이머 시작
-const startTimer = () => {
-  const totalTicks = duration.value * 10; // 10ms 간격으로 1초당 10 tick
-  let currentTick = 0;
-
-  timer = setInterval(() => {
-    currentTick++;
-    timeProgress.value = 100 - (currentTick / totalTicks) * 100; // 진행 바 감소
-    remainingTime.value = Math.ceil(duration.value - (currentTick / 10)); // 남은 시간 갱신
-
-    if (currentTick >= totalTicks) {
-      clearInterval(timer);
-      emit('nextExercise', counter.value); // 제한 시간 종료 시 카운터 값 전달
-    }
-  }, 100);
-};
+let status = "";
 
 // 예측 및 조건 만족 시 카운터 증가
 const predict = async () => {
+  if (!model || !webcam) return;
+
   const { pose, posenetOutput } = await model.estimatePose(webcam.canvas);
   const prediction = await model.predict(posenetOutput);
-
-  if (prediction[0].probability > 0.9) {
-    incrementCounter(); // 조건 만족 시 카운터 증가
-  }
+  
+  // 예측 결과가 특정 조건을 만족할 경우 카운터 증가
+  if (prediction[0].probability.toFixed(2) === "1.00") {
+    if (status === prediction[1].className){
+      incrementCounter();
+    }
+    status = prediction[0].className
+  }else if (prediction[1].probability.toFixed(2) === "1.00") {
+                status = prediction[1].className;
+            }
+ 
 
   drawPose(pose);
 };
 
 // 루프
 const loop = async () => {
-  webcam.update();
-  await predict();
-  window.requestAnimationFrame(loop);
+  webcam.update(); // 웹캠 업데이트
+  await predict(); // 예측 실행
+  window.requestAnimationFrame(loop); // 다음 루프 호출
 };
 
 // 포즈 그리기
 const drawPose = (pose) => {
-  if (webcam.canvas) {
+  if (canvasCtx && webcam.canvas) {
     canvasCtx.drawImage(webcam.canvas, 0, 0);
     if (pose) {
       const minPartConfidence = 0.5;
@@ -151,35 +146,50 @@ const drawPose = (pose) => {
 const incrementCounter = () => {
   counter.value++;
   currentCounter.value++;
-  if (currentCounter.value == 10) {
-    currentCounter.value = 0; // 카운터 칸 초기화
+  if (currentCounter.value >= 10) {
+    currentCounter.value = 0; // 화면 카운터 초기화
   }
 };
 
-// 컴포넌트가 마운트될 때 실행
+// 키보드 이벤트 핸들러
+const handleKeydown = (event) => {
+  if (event.key === '7') {
+    incrementCounter(); // 숫자 7 입력 시 카운터 증가
+  } else if (event.key === '9') {
+    emit('nextExercise', counter.value); // 숫자 9 입력 시 다음 운동으로 이동
+  }
+};
+
+// 제한 시간 타이머 시작
+const startTimer = () => {
+  const totalTicks = duration.value * 10;
+  let currentTick = 0;
+
+  timer = setInterval(() => {
+    currentTick++;
+    timeProgress.value = 100 - (currentTick / totalTicks) * 100;
+    remainingTime.value = Math.ceil(duration.value - currentTick / 10);
+
+    if (currentTick >= totalTicks) {
+      clearInterval(timer);
+      emit('nextExercise', counter.value); // 제한 시간 종료 시 부모에 카운터 전달
+    }
+  }, 100);
+};
+
+// 컴포넌트 마운트 시 Teachable Machine 초기화 및 이벤트 바인딩
 onMounted(async () => {
-  setDuration(); // 운동에 따라 제한 시간 설정
-  document.addEventListener("keydown", handleKeydown); // 키보드 이벤트 추가
+  setDuration();
+  document.addEventListener('keydown', handleKeydown); // 키보드 이벤트 추가
   await initTeachableMachine();
 });
 
-// 컴포넌트가 언마운트되기 전에 실행
+// 컴포넌트 언마운트 시 자원 정리 및 이벤트 제거
 onBeforeUnmount(() => {
-  if (webcam) {
-    webcam.stop();
-  }
-  if (timer) {
-    clearInterval(timer);
-  }
+  if (webcam) webcam.stop();
+  if (timer) clearInterval(timer);
+  document.removeEventListener('keydown', handleKeydown); // 키보드 이벤트 제거
 });
-
-const handleKeydown = (event) => {
-  if (event.key === "7") {
-    incrementCounter();
-  } else if (event.key === "9") {
-    emit('nextExercise', counter.value); // 숫자 9를 누르면 카운터 값과 함께 전달
-  }
-};
 </script>
 
 <style scoped>

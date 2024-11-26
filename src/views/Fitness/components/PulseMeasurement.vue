@@ -78,14 +78,26 @@ const submitPulse = () => {
   emit('pulseComplete', pulseInput.value); // 부모 컴포넌트로 값 전달
 };
 
-// 컴포넌트가 마운트될 때 타이머 시작
+// 키보드 입력 처리
+const handleKeydown = (event) => {
+  if (event.key === '9') {
+    console.log('숫자 9 입력, 카운트다운 종료');
+    countdown.value = 0;
+    isInputVisible.value = true;
+    clearInterval(timer); // 타이머 종료
+  }
+};
+
+// 컴포넌트가 마운트될 때 타이머 시작 및 키보드 이벤트 등록
 onMounted(() => {
   startPulseMeasurement();
+  document.addEventListener('keydown', handleKeydown); // 키보드 이벤트 추가
 });
 
-// 컴포넌트가 언마운트되기 전에 타이머 정리
+// 컴포넌트가 언마운트되기 전에 타이머 정리 및 키보드 이벤트 제거
 onBeforeUnmount(() => {
   if (timer) clearInterval(timer);
+  document.removeEventListener('keydown', handleKeydown); // 키보드 이벤트 제거
 });
 </script>
 
