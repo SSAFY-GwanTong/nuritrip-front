@@ -8,7 +8,7 @@
       <RouterLink to="/fitness" class="choice">체력 측정하기</RouterLink>
       <RouterLink to="/plan" class="choice">여행 계획 세우기</RouterLink>
       <RouterLink to="/explore" class="choice">여행지 살펴보기</RouterLink>
-      <RouterLink to="" class="choice">내 여행 계획 보관함 가기</RouterLink>
+      <RouterLink to="/storage" class="choice">내 여행 계획 보관함 가기</RouterLink>
     </div>
   </div>
 </template>

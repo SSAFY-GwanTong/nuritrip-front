@@ -68,7 +68,7 @@
   
   <style scoped>
   .main-container{
-    min-width:800px;
+    min-width:930px;
   }
   .guide {
     display: flex;

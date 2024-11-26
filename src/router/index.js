@@ -39,6 +39,16 @@ const router = createRouter({
       name: 'Plan',
       component: () => import('../views/Plan/Plan.vue'),
     },
+    {
+      path: '/storage',
+      namee: 'Storage',
+      component: () => import('../views/Storage/Storage.vue'),
+    },
+    {
+      path: '/detail-plan/:plan_id',
+      name: 'DetailPlan',
+      component: () => import('../views/UserPlanDetail/UserPlanDetail.vue')
+    }
   ],
 })
 
