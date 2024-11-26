@@ -33,10 +33,11 @@ import union from '@/assets/img/union.png'
 .navbar {
   z-index: 999;
   height: 120px;
-  position: fixed;
+  position: sticky;
   top: 0;
   right: 0;
   left: 0;
+  background-color: var(--bgcolor);
   width: 100%;
   min-width: 800px;
   display: flex; /* Flexbox 사용 */

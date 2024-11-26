@@ -31,8 +31,8 @@ import InputBox from './components/InputBox.vue'
   background-color: #fff1da;
 }
 img {
-  margin-top: 30px;
   margin-right: 150px;
+  margin-top: -130px;
 }
 .right-container {
   float: right;
@@ -50,13 +50,11 @@ img {
   margin-left: 10vw;
 }
 .signup {
-  margin: 0 auto;
-  margin-top: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 720px;
-  width: 580px;
+  min-height: 600px;
+  width: 550px;
   z-index: 1;
   border-radius: 15px;
   background-color: #ffffff;
@@ -81,7 +79,7 @@ img {
   box-sizing: border-box;
   height: 46px;
   width: 416px;
-  margin-top: 90px;
+  margin-top: 60px;
 }
 
 .publish {

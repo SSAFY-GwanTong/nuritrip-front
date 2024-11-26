@@ -21,7 +21,7 @@ import union from '@/assets/img/union.png'
 
 <style scoped>
 .navbar {
-  z-index: 999;
+  z-index: 1;
   height: 120px;
   position: fixed;
   top: 0;

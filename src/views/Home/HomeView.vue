@@ -1,13 +1,6 @@
 <template>
   <div class="mainpage">
-    <div class="div">
-      <img class="shiba-inu-dog" alt="Shiba inu dog" :src="shibaInuDogShowingMuscles" />
       <div class="group">
-        <RouterLink to="/signin" class="overlap-group-wrapper">
-          <div class="overlap-group">
-            <div class="text-wrapper">시작하기</div>
-          </div>
-        </RouterLink>
         <p class="p">
           당신의 체력에 맞춘
           <br />
@@ -17,9 +10,14 @@
           체력 측정부터 여행 일정까지 <br />
           여행 매니저와 함께하는 완벽한 여행 준비
         </p>
+        <RouterLink to="/signin" class="overlap-group-wrapper">
+          <div class="overlap-group">
+            <div class="text-wrapper">시작하기</div>
+          </div>
+        </RouterLink>
       </div>
+      <img class="shiba-inu-dog" alt="Shiba inu dog" :src="shibaInuDogShowingMuscles" />
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -27,63 +25,50 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
 </script>
 
 <style scoped>
+body{
+  overflow-y: hidden;
+  overflow-x: scroll;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bgcolor);
+}
 .mainpage {
   background-color: var(--bgcolor);
   display: flex;
-  flex-direction: row;
-  justify-content: center;
   width: 100%;
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-}
-.mainpage .div {
-  background-color: var(--bgcolor);
-  height: 900px;
-  overflow-x: hidden;
-  position: relative;
-  width: 1440px;
+  height: 100%;
+  justify-content: center;
 }
 .mainpage .shiba-inu-dog {
-  height: 667px;
-  left: 695px;
-  object-fit: cover;
-  position: absolute;
-  top: 157px;
-  width: 667px;
+  height: 600px;
+  width: 600px;
 }
 .mainpage .group {
-  height: 397px;
-  left: 120px;
-  position: absolute;
-  top: 200px;
-  width: 511px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 60px;
 }
 .mainpage .overlap-group-wrapper {
   height: 70px;
-  left: 0;
-  position: absolute;
-  top: 400px;
   width: 225px;
+  text-decoration: none;
 }
 .mainpage .overlap-group {
   background-color: var(--maincolor);
   border-radius: 40px;
   height: 70px;
   width: 223px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .mainpage .text-wrapper {
   color: #ffffff;
   font-size: 25px;
   font-weight: 600;
-  left: 65px;
   letter-spacing: 0;
   line-height: 16px;
-  position: absolute;
   text-align: center;
-  top: 27px;
   white-space: nowrap;
 }
 .mainpage .p {
@@ -92,6 +77,8 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   letter-spacing: 0;
   line-height: 100px;
   width: 507px;
+  margin: 0;
+  padding: 0;
 }
 .mainpage .text-wrapper-2 {
   font-size: 25px;
@@ -99,10 +86,8 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   left: 0;
   letter-spacing: 0;
   line-height: 35px;
-  position: absolute;
-  top: 216px;
   width: 507px;
-  margin-top: 50px;
+  margin-bottom: 80px;
 }
 
 .mainpage .div-wrapper {
@@ -110,8 +95,6 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   border-color: var(--maincolor);
   border-radius: 27px;
   height: 54px;
-  left: 129px;
-  top: 0;
   width: 170px;
 }
 .mainpage .text-wrapper-3 {
@@ -123,7 +106,6 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   letter-spacing: 0;
   line-height: 16px;
   text-align: center;
-  top: 18px;
   width: 80px;
 }
 .mainpage .text-wrapper-4 {
@@ -134,19 +116,10 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   letter-spacing: 0;
   line-height: 16px;
   text-align: center;
-  top: 19px;
   width: 80px;
-}
-.mainpage .logo {
-  height: 35px;
-  left: 107px;
-  top: 44px;
-  width: 216px;
 }
 .mainpage .union {
   height: 35px;
-  left: 0;
-  top: 0;
   width: 42px;
 }
 .mainpage .text-wrapper-5 {
@@ -156,7 +129,6 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
   left: 48px;
   letter-spacing: 0;
   line-height: 20px;
-  top: 7px;
   white-space: nowrap;
 }
 </style>

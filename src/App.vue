@@ -1,6 +1,7 @@
 <template>
   <div class="app">
-    <Logo v-if="['SignIn', 'SignUp'].includes($route.name) == true"></Logo>
+    <LogoLogin v-if="['SignIn'].includes($route.name) == true"></LogoLogin>
+    <LogoSignUp v-else-if="['SignUp'].includes($route.name) == true"></LogoSignUp>
     <NavbarBeforeLogin v-else-if="['HomeView'].includes($route.name) == true"></NavbarBeforeLogin>
     <NavbarAfterLogin v-else></NavbarAfterLogin>
     <RouterView></RouterView>
@@ -9,7 +10,8 @@
 
 <script setup>
 import NavbarBeforeLogin from './components/navbar/NavbarBeforeLogin.vue'
-import Logo from './components/navbar/Logo.vue'
+import LogoLogin from './components/navbar/LogoLogin.vue'
+import LogoSignUp from './components/navbar/LogoSignUp.vue';
 import NavbarAfterLogin from './components/navbar/NavbarAfterLogin.vue'
 </script>
 
@@ -21,11 +23,12 @@ import NavbarAfterLogin from './components/navbar/NavbarAfterLogin.vue'
 }
 body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .app {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
 }

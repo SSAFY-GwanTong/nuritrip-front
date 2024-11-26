@@ -42,7 +42,7 @@ const showDetail = (info) => {
   flex-direction: row;
   flex-wrap: wrap;
   max-width: 88%;
-  justify-content: center;
+  justify-content: space-between;
 }
 .card {
   margin-left: 20px;
