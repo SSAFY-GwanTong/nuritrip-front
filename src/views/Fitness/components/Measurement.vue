@@ -32,11 +32,13 @@
       </div>
     </div>
 
-    <!-- 아래쪽: 제한 시간 표시 -->
+    <!-- 아래쪽: 제한 시간 바 -->
     <div class="progress-bar-container">
       <div class="progress-bar" :style="{ width: `${timeProgress}%` }"></div>
-      <div class="remaining-time">{{ remainingTime }}초 남음</div>
     </div>
+
+    <!-- 제한 시간 표시 -->
+    <div class="remaining-time">{{ remainingTime }}초 남음</div>
   </div>
 </template>
 
@@ -47,7 +49,7 @@ const emit = defineEmits(['nextExercise']) // 다음 화면 이벤트 emit
 
 const counter = ref(0) // 카운터 값
 const circumference = 2 * Math.PI * 50 // 원형 진행 바 둘레
-const timeProgress = ref(100) // 제한 시간 진행 바 초기값 (100%에서 시작)
+const timeProgress = ref(100) // 제한 시간 진행 바 초기값
 const duration = 10 // 제한 시간 (초)
 const countdown = ref(5) // 시작 전 대기 시간 (초)
 const remainingTime = ref(duration) // 남은 제한 시간
@@ -55,8 +57,6 @@ const remainingTime = ref(duration) // 남은 제한 시간
 let model = null // Teachable Machine 모델
 let webcam = null // Teachable Machine 웹캠
 let canvasCtx = null // 캔버스 컨텍스트
-let maxPredictions = 0 // 예측 클래스 수
-let status = "stand" // 현재 상태
 let timer = null // 제한 시간 타이머
 let countdownTimer = null // 대기 타이머
 
@@ -67,8 +67,6 @@ const initTeachableMachine = async () => {
     const modelURL = `${MODEL_URL}model.json`
     const metadataURL = `${MODEL_URL}metadata.json`
     model = await window.tmPose.load(modelURL, metadataURL)
-
-    maxPredictions = model.getTotalClasses()
 
     const size = 300
     webcam = new window.tmPose.Webcam(size, size, true) // flip: true
@@ -99,74 +97,24 @@ const startCountdown = () => {
 
 // 제한 시간 및 예측 시작
 const startExercise = () => {
-  // 제한 시간 진행 바 초기화
   const totalTicks = duration * 10
   let currentTick = 0
 
-  // 제한 시간 타이머 시작
   timer = setInterval(() => {
     currentTick++
-    timeProgress.value = 100 - (currentTick / totalTicks) * 100 // 반대 방향 감소
-    remainingTime.value = Math.ceil(duration - (currentTick / 10)) // 남은 시간 계산
+    timeProgress.value = 100 - (currentTick / totalTicks) * 100 // 진행 바 반대로 감소
+    remainingTime.value = Math.ceil(duration - (currentTick / 10)) // 남은 시간 갱신
 
     if (currentTick >= totalTicks) {
       clearInterval(timer)
       stopExercise() // 제한 시간 종료
     }
   }, 100)
-
-  // 예측 루프 시작
-  window.requestAnimationFrame(loop)
 }
 
 // 제한 시간 종료 시 실행
 const stopExercise = () => {
-  console.log("운동 종료, 다음 단계로 이동")
   emit('nextExercise') // 다음 화면으로 이동
-}
-
-// 웹캠 루프
-const loop = async () => {
-  if (webcam) {
-    webcam.update()
-    await predict()
-    window.requestAnimationFrame(loop)
-  }
-}
-
-// 예측 및 카운터 업데이트
-const predict = async () => {
-  const { pose, posenetOutput } = await model.estimatePose(webcam.canvas)
-  const prediction = await model.predict(posenetOutput)
-
-  // 특정 조건 만족 시 카운터 증가
-  if (prediction[0].probability > 0.9) {
-    if (status === "complete") {
-      increaseCounter()
-      status = "stand"
-    }
-  } else if (prediction[1].probability === 1.0) {
-    status = "complete"
-  }
-
-  drawPose(pose)
-}
-
-// 포즈 그리기
-const drawPose = (pose) => {
-  if (webcam.canvas) {
-    canvasCtx.drawImage(webcam.canvas, 0, 0)
-    if (pose) {
-      const minPartConfidence = 0.5
-      window.tmPose.drawKeypoints(pose.keypoints, minPartConfidence, canvasCtx)
-      window.tmPose.drawSkeleton(pose.keypoints, minPartConfidence, canvasCtx)
-    }
-  }
-}
-
-// 카운터 증가
-const increaseCounter = () => {
-  counter.value = (counter.value % 10) + 1 // 11이면 다시 1부터 시작
 }
 
 // 컴포넌트가 마운트될 때 실행
@@ -208,7 +156,7 @@ onBeforeUnmount(() => {
   width: 300px;
   height: auto;
   border-radius: 10px;
-  background-color: #000; /* 웹캠 미사용 시 빈 화면 */
+  background-color: #000;
 }
 
 /* 카운터 */
@@ -269,10 +217,11 @@ onBeforeUnmount(() => {
   transition: width 0.1s linear;
 }
 
+/* 제한 시간 텍스트 */
 .remaining-time {
-  margin-top: 5px;
+  margin-top: 10px;
   text-align: center;
   font-size: 14px;
-  color: #333;
+  color: #000;
 }
 </style>
