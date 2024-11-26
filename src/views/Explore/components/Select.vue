@@ -24,7 +24,6 @@ const selected = ref(null)
 watch(selected, (newValue) => {
   emit('update', newValue)
 })
-
 </script>
 <style scoped>
 .p-select {

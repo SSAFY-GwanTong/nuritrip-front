@@ -1,27 +1,26 @@
 <template>
   <div class="text-box">
     <div class="standard-default">{{ content }}</div>
-    <input type="text" v-model="inputValue" @input="sendData"/>
+    <input type="text" v-model="inputValue" @input="sendData" />
   </div>
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits } from 'vue'
 const props = defineProps({
   content: {
     Type: String,
   },
-  type:{
+  type: {
     Type: String,
-  }
+  },
 })
 
-const inputValue = ref("")
-const emit = defineEmits();
+const inputValue = ref('')
+const emit = defineEmits()
 const sendData = () => {
-  emit('update-input', {type:props.type, value: inputValue.value})
+  emit('update-input', { type: props.type, value: inputValue.value })
 }
-
 </script>
 
 <style scoped>

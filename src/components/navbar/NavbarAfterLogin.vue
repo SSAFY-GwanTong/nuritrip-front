@@ -31,36 +31,31 @@
 <script setup>
 import union from '@/assets/img/union.png'
 import userprofile from '@/assets/img/userprofile.png'
-import { axiosInstance } from '@/axios.js';
+import { axiosInstance } from '@/axios.js'
 import { onBeforeMount, ref } from 'vue'
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/index.js';
-const store = useAuthStore();
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/index.js'
+const store = useAuthStore()
 const userInfo = ref({})
 
 onBeforeMount(async () => {
-  axiosInstance.get(`/users/my`)
-    .then((res) => {
-      if(res.data.isSuccess === true){
-        console.log(res)
-        const data = res.data.result
-        userInfo.value = {name : data.name, profile_img: data.profileImg, strength_level: data.strengthLevel}
-        store.setName(data.name);
+  axiosInstance.get(`/users/my`).then((res) => {
+    if (res.data.isSuccess === true) {
+      const data = res.data.result
+      userInfo.value = {
+        name: data.name,
+        profile_img: data.profileImg,
+        strength_level: data.strengthLevel,
       }
-    })
-    .catch((err) => {
-      console.log('데이터를 가져오는 중 오류 발생 : ', err)
-    })
+      store.setName(data.name)
+    }
+  })
 })
-
-
-const name = ref('홍길동')
-const level = ref(3)
 </script>
 
 <style scoped>
 .navbar {
-  z-index: 1;
+  z-index: 999;
   height: 80px;
   position: sticky;
   top: 0;

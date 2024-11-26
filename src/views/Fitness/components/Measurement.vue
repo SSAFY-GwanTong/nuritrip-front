@@ -11,7 +11,15 @@
       <div class="counter-section">
         <div class="progress-circle">
           <svg class="circle" width="120" height="120">
-            <circle class="background" cx="60" cy="60" r="50" fill="none" stroke="#eee" stroke-width="10" />
+            <circle
+              class="background"
+              cx="60"
+              cy="60"
+              r="50"
+              fill="none"
+              stroke="#eee"
+              stroke-width="10"
+            />
             <circle
               class="progress"
               cx="60"
@@ -25,9 +33,7 @@
               stroke-linecap="round"
             />
           </svg>
-          <div class="counter-number">
-            {{ counter }} <span class="small">개</span>
-          </div>
+          <div class="counter-number">{{ counter }} <span class="small">개</span></div>
         </div>
       </div>
     </div>

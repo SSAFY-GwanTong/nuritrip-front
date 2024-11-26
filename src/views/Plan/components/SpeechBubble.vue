@@ -15,13 +15,14 @@ const props = defineProps({
 <style scoped>
 .speech-bubble {
   background: var(--maincolor);
-  width: 450px;
+  width: 600px;
   height: 75px;
   border-radius: 15px;
   position: relative;
   padding: 12px;
   padding-top: 16px;
   padding-left: 30px;
+  margin-right: 50px;
 }
 
 .speech-bubble::before {

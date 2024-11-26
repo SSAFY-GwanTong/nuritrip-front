@@ -18,7 +18,7 @@
           <div class="num-input">
             <p>나이</p>
             <InputNumber v-model="age" inputId="integeronly" :min="0" :max="100" fluid />
-          </div>  
+          </div>
         </div>
         <button class="button" @click="register">
           <div class="publish">회원가입</div>
@@ -34,13 +34,13 @@
 <script setup>
 import Car from '@/assets/img/Car.png'
 import InputBox from './components/InputBox.vue'
-import RadioButton from 'primevue/radiobutton';
-import InputNumber from 'primevue/inputnumber';
-import { ref } from 'vue';
-import { axiosInstance } from '@/axios.js';
-import { useRouter } from 'vue-router';
+import RadioButton from 'primevue/radiobutton'
+import InputNumber from 'primevue/inputnumber'
+import { ref } from 'vue'
+import { axiosInstance } from '@/axios.js'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 const user_id = ref('')
 const password = ref('')
@@ -49,36 +49,36 @@ const gender = ref('')
 const age = ref(20)
 
 const handleInputUpdate = (data) => {
-  if(data.type === "user_id"){
-    user_id.value = data.value;
-  }else if(data.type === "password"){
-    password.value = data.value;
-  }else if(data.type === "name"){
-    name.value = data.value;
+  if (data.type === 'user_id') {
+    user_id.value = data.value
+  } else if (data.type === 'password') {
+    password.value = data.value
+  } else if (data.type === 'name') {
+    name.value = data.value
   }
 }
 
 const register = () => {
   const params = ref({
-    user_id: user_id.value, 
-    password: password.value, 
-    name: name.value, 
+    user_id: user_id.value,
+    password: password.value,
+    name: name.value,
     age: age.value,
-    gender: gender.value
+    gender: gender.value,
   })
-  axiosInstance.post(`/users/signup`, params.value)
+  axiosInstance
+    .post(`/users/signup`, params.value)
     .then((res) => {
-      if(res.data.isSuccess === true){
+      if (res.data.isSuccess === true) {
         router.push('/signin')
-      }else{
-        alert("회원가입 실패!")
+      } else {
+        alert('회원가입 실패!')
       }
     })
     .catch((err) => {
-      alert("회원가입 실패! 새로운 아이디로 다시 도전하세요.")
+      alert('회원가입 실패! 새로운 아이디로 다시 도전하세요.')
     })
 }
-
 </script>
 
 <style scoped>
@@ -155,7 +155,7 @@ img {
   text-align: center;
 }
 
-.attr{
+.attr {
   margin-top: 25px;
   display: flex;
   width: 393px;
@@ -163,25 +163,25 @@ img {
   align-items: center;
   justify-content: space-between;
 }
-.p-inputnumber{
+.p-inputnumber {
   width: 53px;
   height: 40px;
 }
-.num-input{
+.num-input {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.num-input p{
+.num-input p {
   margin-right: 20px;
 }
-.p-radiobutton{
+.p-radiobutton {
   margin-right: 10px;
 }
-label{
+label {
   cursor: pointer;
 }
-.m-button{
+.m-button {
   margin-right: 50px;
 }
 </style>

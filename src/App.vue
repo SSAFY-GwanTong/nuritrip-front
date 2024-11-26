@@ -11,14 +11,13 @@
 <script setup>
 import NavbarBeforeLogin from './components/navbar/NavbarBeforeLogin.vue'
 import LogoLogin from './components/navbar/LogoLogin.vue'
-import LogoSignUp from './components/navbar/LogoSignUp.vue';
+import LogoSignUp from './components/navbar/LogoSignUp.vue'
 import NavbarAfterLogin from './components/navbar/NavbarAfterLogin.vue'
-import { ref } from 'vue';
+import { ref } from 'vue'
 const name = ref('')
 const setName = (value) => {
-  name.value = value;
+  name.value = value
 }
-
 </script>
 
 <style>

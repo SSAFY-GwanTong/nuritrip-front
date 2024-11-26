@@ -59,27 +59,27 @@ const selectedDistrict = ref()
 const selectedAttraction = ref()
 const data = ref([])
 
-const currentPage = ref(1);
-const pageSize = ref(15);
+const currentPage = ref(1)
+const pageSize = ref(15)
 
 const handleScroll = () => {
-  const scrollTop = window.scrollY;
-  const windowHeight = window.innerHeight;
-  const documentHeight = document.documentElement.scrollHeight;
+  const scrollTop = window.scrollY
+  const windowHeight = window.innerHeight
+  const documentHeight = document.documentElement.scrollHeight
 
   // 페이지의 끝에 도달했을 때
   if (scrollTop + windowHeight >= documentHeight - 100) {
-    loadMoreData();
+    loadMoreData()
   }
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
-});
+  window.addEventListener('scroll', handleScroll)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll);
-});
+  window.removeEventListener('scroll', handleScroll)
+})
 
 const cities = ref([
   { name: '서울특별시', code: 1 },
@@ -108,46 +108,42 @@ const attractions = ref([
   { name: '음식점', code: 39 },
 ])
 const loadMoreData = () => {
-  let url = `attractions?page_size=${pageSize.value}&offset=${(currentPage.value -1)*pageSize.value}&`
-  if(selectedCity.value) url+=`sido=${selectedCity.value}&`
-  if(selectedDistrict.value) url+=`gugun=${selectedDistrict.value}&`
-  if(selectedAttraction.value) url+=`content=${selectedAttraction.value}`
-  axiosInstance.get(url)
-    .then((res) => {
-      data.value.push(...res.data.result);
-      currentPage.value++;
-    })
+  let url = `attractions?page_size=${pageSize.value}&offset=${(currentPage.value - 1) * pageSize.value}&`
+  if (selectedCity.value) url += `sido=${selectedCity.value}&`
+  if (selectedDistrict.value) url += `gugun=${selectedDistrict.value}&`
+  if (selectedAttraction.value) url += `content=${selectedAttraction.value}`
+  axiosInstance.get(url).then((res) => {
+    data.value.push(...res.data.result)
+    currentPage.value++
+  })
 }
 const getAttractions = (option) => {
   changeValue(option)
-  currentPage.value = 1;
-  let url = `attractions?page_size=${pageSize.value}&offset=${(currentPage.value -1)*pageSize.value}&`
-  if(selectedCity.value) url+=`sido=${selectedCity.value}&`
-  if(selectedDistrict.value) url+=`gugun=${selectedDistrict.value}&`
-  if(selectedAttraction.value) url+=`content=${selectedAttraction.value}`
-  axiosInstance.get(url)
-    .then((res) => {
-      data.value = res.data.result;
-      currentPage.value++;
-    })
+  currentPage.value = 1
+  let url = `attractions?page_size=${pageSize.value}&offset=${(currentPage.value - 1) * pageSize.value}&`
+  if (selectedCity.value) url += `sido=${selectedCity.value}&`
+  if (selectedDistrict.value) url += `gugun=${selectedDistrict.value}&`
+  if (selectedAttraction.value) url += `content=${selectedAttraction.value}`
+  axiosInstance.get(url).then((res) => {
+    data.value = res.data.result
+    currentPage.value++
+  })
 }
 const changeValue = (option) => {
-  if(option!= null){
-    if(option.hasOwnProperty('gugunCode')){
-      selectedDistrict.value = option.gugunCode;
-    }else {
-      selectedAttraction.value = option.code;
+  if (option != null) {
+    if (option.hasOwnProperty('gugunCode')) {
+      selectedDistrict.value = option.gugunCode
+    } else {
+      selectedAttraction.value = option.code
     }
   }
-  
 }
 const handleSelectedCity = (city) => {
-  selectedCity.value = city.code;
-  axiosInstance.get(`attractions/guguns?sido=${city.code}`)
-    .then((res) => {
-      districts.value = res.data.result;
-    })
-  getAttractions(null);
+  selectedCity.value = city.code
+  axiosInstance.get(`attractions/guguns?sido=${city.code}`).then((res) => {
+    districts.value = res.data.result
+  })
+  getAttractions(null)
 }
 
 const cardInfo = ref(null)
