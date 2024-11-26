@@ -28,7 +28,7 @@
     right: 0;
     left: 0;
     width: 100%;
-    min-width: 800px;
+    min-width: 1200px;
     display: flex; /* Flexbox 사용 */
     align-items: center; /* 세로 중앙 정렬 */
     padding: 0 10px; /* 좌우 패딩 추가 */

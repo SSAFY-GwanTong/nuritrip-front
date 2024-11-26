@@ -30,6 +30,7 @@ body {
 
 .app {
   display: flex;
+  width: 100vw;
   flex-direction: column;
 }
 </style>

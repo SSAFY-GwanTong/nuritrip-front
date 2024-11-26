@@ -29,12 +29,13 @@ import BgImg from '@/assets/img/cover1.png'
   background-color: transparent;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
+  overflow: hidden;
 }
 .bg-img{
   position: relative;
-  width:
+  height: 100vh;
+  margin-left :180px;
 }
 .signin {
   position: absolute;
@@ -57,7 +58,7 @@ import BgImg from '@/assets/img/cover1.png'
   background-color: white;
   z-index: 1;
   border-radius: 15px;
-  box-shadow: 0 1px 13px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  /* box-shadow: 0 1px 13px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); */
 }
 
 .signin .text-wrapper {

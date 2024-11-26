@@ -26,9 +26,10 @@ import InputBox from './components/InputBox.vue'
 <style scoped>
 .main-container {
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 120px);
   display: flex;
   background-color: #fff1da;
+  min-width: 1200px;
 }
 img {
   margin-right: 150px;
@@ -69,7 +70,7 @@ img {
   line-height: 42px;
   width: 416px;
   margin-bottom: 20px;
-  margin-top: 45px;
+  margin-top: 40px;
 }
 
 .button {

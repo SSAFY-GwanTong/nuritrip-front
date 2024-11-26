@@ -26,31 +26,32 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
 
 <style scoped>
 body{
-  overflow-y: hidden;
-  overflow-x: scroll;
-  height: 100%;
   width: 100%;
-  background-color: var(--bgcolor);
+  height: 100%;
+  overflow-x: scroll;
 }
 .mainpage {
   background-color: var(--bgcolor);
   display: flex;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 120px);
   justify-content: center;
+  min-width: 1200px;
 }
 .mainpage .shiba-inu-dog {
   height: 600px;
   width: 600px;
+  object-fit: contain;
 }
 .mainpage .group {
+  margin-left: 10%;
   display: flex;
   flex-direction: column;
   padding-top: 60px;
 }
 .mainpage .overlap-group-wrapper {
   height: 70px;
-  width: 225px;
+  width: 200px;
   text-decoration: none;
 }
 .mainpage .overlap-group {
