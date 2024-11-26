@@ -20,7 +20,7 @@
             </div>
 
             <!-- 선 추가 -->
-            <div v-if="index < days.length - 1" class="connector"></div>
+            <div v-if="index < days.length - 1" class="connector"></div> 
         </div>
     </div>
 </template>

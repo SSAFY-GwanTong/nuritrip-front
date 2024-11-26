@@ -1,5 +1,5 @@
 <template lang="">
-    <div>
+    <div class="main-container">
       <div class="guide">
         <img :src="shiba" alt="" />
         <SpeechBubble :contents="guideContents" class="speech-bubble"></SpeechBubble>
@@ -31,6 +31,11 @@
       <div class="plans">
          <DetailPlan></DetailPlan>
       </div>
+      <div class="store">
+        <div>
+            저장하기
+        </div>
+      </div>
     </div>
   </template>
   
@@ -42,6 +47,7 @@
   import Select from './components/Select.vue';
   import Map from './components/Map.vue';
   import DetailPlan from './components/DetailPlan.vue';
+  import Button from 'primevue/button';
   import { useAuthStore } from '@/stores/index.js'
   
   const store = useAuthStore()
@@ -61,10 +67,14 @@
   </script>
   
   <style scoped>
+  .main-container{
+    min-width:800px;
+  }
   .guide {
     display: flex;
     justify-content: center;
     margin-top: 30px;
+
   }
   img {
     width: 100px;
@@ -136,6 +146,23 @@
       background-color: var(--bluecolor); /* 선택된 day의 배경색 */
       border: none;
       color: white; /* 선택된 day의 글자색 */
+  }
+  .store{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 100px;
+    cursor: pointer;
+  }
+  .store div{
+    background-color: var(--blackcolor); 
+    width: 300px;
+    height: 50px;
+    border-radius: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   </style>
   
