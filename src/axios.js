@@ -21,24 +21,24 @@ axiosInstance.interceptors.request.use(
     }
 )
 
-axiosInstance.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        if(error.response) {
-            const status = error.response.status;
-            if (status === 401 && error.response.data.requestURI){
-                console.error('401 Unauthorized');
-                router.push(`${error.response.data.requestURI}`);
-            } else{
-                console.error(`HTTP Error: ${status} ${error.response.statusText}`);
-            }
-        } else{
-            console.error('Network Error: ', error.message);
-        }
-        return Promise.reject(error);
-    }
-)
+// axiosInstance.interceptors.response.use(
+//     (response) => {
+//         return response;
+//     },
+//     (error) => {
+//         if(error.response) {
+//             const status = error.response.status;
+//             if (status === 401 && error.response.data.requestURI){
+//                 console.error('401 Unauthorized');
+//                 router.push(`${error.response.data.requestURI}`);
+//             } else{
+//                 console.error(`HTTP Error: ${status} ${error.response.statusText}`);
+//             }
+//         } else{
+//             console.error('Network Error: ', error.message);
+//         }
+//         return Promise.reject(error);
+//     }
+// )
 
 export { axiosInstance };

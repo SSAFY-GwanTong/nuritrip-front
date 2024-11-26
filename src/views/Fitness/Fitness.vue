@@ -3,7 +3,7 @@
     <!-- 가이드 영역 -->
     <div class="guide">
       <img :src="shiba" alt="Guide Character" />
-      <SpeechBubble :contents="guideContents" class="speech-bubble"></SpeechBubble>
+      <SpeechBubble :contents="currentGuideContents" class="speech-bubble"></SpeechBubble>
     </div>
 
     <!-- 콘텐츠 영역 -->
@@ -15,8 +15,9 @@
       :circumference="circumference"
       :countdown="countdown"
       :pulse-image="pulseImage"
-      @startMeasurement="startMeasurement"
-      @nextExercise="nextExercise"
+      @startMeasurement="handleStartMeasurement"
+      @nextExercise="handleNextExercise"
+      @pulseComplete="handlePulseComplete"
     ></component>
   </div>
 </template>
@@ -29,8 +30,21 @@ import ShowVideo from './components/ShowVideo.vue'
 import Measurement from './components/Measurement.vue'
 import PulseMeasurement from './components/PulseMeasurement.vue'
 
-// 가이드 내용
-const guideContents = ['체력 측정을 시작합니다!', '다음 동작을 20초 안에 최대한 많이 따라하세요']
+// 전체 가이드 메시지
+const guideMessages = [
+  ['첫번째 측정은 스쿼트 입니다', '아래의 영상을 따라 1분간 진행합니다.'], ['훌륭합니다! 꾸준히 움직이면 큰 변화를 만드실 수 있어요.'],
+  ['두번째 측정은 버피 입니다.', '아래의 영상을 따라 1분간 진행합니다.'], ['멋져요! 버피는 전신 운동에 최고입니다.'],
+  ['세번째 측정은 싯업 입니다', '아래의 영상을 따라 1분간 진행합니다.'],['대단합니다! 복근 강화에 정말 좋은 운동입니다.'],
+  ['마지막은 벤치 클라임입니다.', '아래 이미지를 따라 3분간 진행합니다.'],[ '마지막까지 힘내세요! 이 운동은 하체와 심폐 기능을 향상시킵니다.'],
+  ['맥박을 측정합니다', '1분동안 맥박수를 세어주세요.'],
+]
+
+// 가이드 인덱스 관리
+const guideIndex = ref(0)
+const currentGuideContents = computed(() => guideMessages[guideIndex.value])
+
+// 운동 결과 저장 리스트
+const exerciseResults = ref([])
 
 // 운동 데이터
 const exercises = ref([
@@ -58,8 +72,27 @@ const currentComponent = computed(() => {
 })
 
 // 이벤트 핸들러
-const startMeasurement = () => (stage.value = 'measurement')
-const nextExercise = () => {
+const handleStartMeasurement = () => {
+  stage.value = 'measurement'
+
+  // 가이드 인덱스 증가
+  if (guideIndex.value < guideMessages.length - 1) {
+    guideIndex.value++
+  }
+}
+
+const handleNextExercise = (counterValue) => {
+  // 운동 결과를 리스트에 저장
+  exerciseResults.value.push({
+    exercise: exercises.value[currentExercise.value].name,
+    count: counterValue,
+  })
+
+  // 가이드 인덱스 증가
+  if (guideIndex.value < guideMessages.length - 1) {
+    guideIndex.value++
+  }
+
   if (currentExercise.value === exercises.value.length - 1) {
     stage.value = 'pulse-measurement'
   } else {
@@ -67,6 +100,14 @@ const nextExercise = () => {
     currentExercise.value++
     stage.value = 'show-video'
   }
+}
+
+const handlePulseComplete = (pulseData) => {
+  // 맥박 데이터를 리스트에 저장
+  exerciseResults.value.push({ pulse: pulseData })
+
+  // 운동 결과 리스트를 콘솔에 출력
+  console.log('운동 완료. 전체 결과 리스트:', exerciseResults.value)
 }
 </script>
 
@@ -108,37 +149,5 @@ button {
 }
 button:hover {
   background-color: #ff4500;
-}
-
-/* 공통 원형 진행 바 스타일 */
-.progress-circle {
-  position: relative;
-  width: 120px;
-  height: 120px;
-}
-.circle {
-  transform: rotate(-90deg); /* 시작 위치를 위로 이동 */
-  transform-origin: center;
-}
-.background {
-  opacity: 0.3;
-}
-.progress {
-  transition: stroke-dashoffset 0.3s ease-in-out;
-}
-.counter-number {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-/* 맥박 입력 필드 */
-.pulse-input {
-  margin-top: 20px;
-  text-align: center;
 }
 </style>
