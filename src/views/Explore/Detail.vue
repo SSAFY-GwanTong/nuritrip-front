@@ -5,7 +5,8 @@
         <i class="pi pi-times"></i>
       </div>
       <div class="attraction-img">
-        <img :src="cardInfo.img" alt="" />
+        <img v-if="cardInfo.img" :src="cardInfo.img" alt="" />
+        <img v-else src="https://img.freepik.com/free-psd/3d-rendering-travel-still-life_23-2151799375.jpg?ga=GA1.1.624011667.1732600568&semt=ais_hybrid">
       </div>
       <div class="title">
         <p>경포해변</p>

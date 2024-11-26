@@ -13,4 +13,8 @@ body {
   --graycolor: #efefef;
   --attraction-info-color: #909090;
   --heartcolor: #f86666;
+  --lightgray: #F5F5F5;
+  --p-inputtext-background: transparent;
+  --bluecolor: #4D9BF6;
+  --unselected-day: #A5A5A5;
 }

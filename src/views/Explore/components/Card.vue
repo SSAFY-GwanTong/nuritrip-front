@@ -3,7 +3,11 @@
     <div v-for="info in data" :key="info.contentId" class="card" @click="showDetail(info)">
       <div class="attraction-img">
         <img v-if="info.img" :src="info.img" alt="" />
-        <img v-else src="https://img.freepik.com/free-psd/3d-rendering-travel-still-life_23-2151799375.jpg?ga=GA1.1.624011667.1732600568&semt=ais_hybrid" alt="">
+        <img
+          v-else
+          src="https://img.freepik.com/free-psd/3d-rendering-travel-still-life_23-2151799375.jpg?ga=GA1.1.624011667.1732600568&semt=ais_hybrid"
+          alt=""
+        />
         <div class="icon">
           <i class="pi pi-heart"></i>
         </div>

@@ -37,7 +37,11 @@ const exercises = ref([
   { name: '스쿼트', type: 'video', source: 'https://ghwns82.github.io/tmp/squat.mp4' },
   { name: '버피', type: 'video', source: 'https://ghwns82.github.io/tmp/burpee.mp4' },
   { name: '싯업', type: 'video', source: 'https://ghwns82.github.io/tmp/situps.mp4' },
-  { name: '벤치 클라임', type: 'image', source: 'https://ghwns82.github.io/tmp/img_diagnosis_01.png' },
+  {
+    name: '벤치 클라임',
+    type: 'image',
+    source: 'https://ghwns82.github.io/tmp/img_diagnosis_01.png',
+  },
 ])
 
 const pulseImage = 'https://ghwns82.github.io/tmp/img_diagnosis_01.png'

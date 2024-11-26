@@ -6,7 +6,7 @@
     </div>
     <div class="choices">
       <RouterLink to="/fitness" class="choice">체력 측정하기</RouterLink>
-      <RouterLink to="/" class="choice">여행 계획 세우기</RouterLink>
+      <RouterLink to="/plan" class="choice">여행 계획 세우기</RouterLink>
       <RouterLink to="/explore" class="choice">여행지 살펴보기</RouterLink>
       <RouterLink to="" class="choice">내 여행 계획 보관함 가기</RouterLink>
     </div>
@@ -15,14 +15,12 @@
 <script setup>
 import SpeechBubble from '@/components/SpeechBubble.vue'
 import shiba from '@/assets/img/shiba-inu-dog-praying.png'
-import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/index.js'
 
-const{name} = history.state
+const store = useAuthStore()
+const name = store.getName
 
-const guideContents = [
-  `안녕하세요! ${name} 님의 여행 매니저 누리입니다.`,
-  '무엇을 도와드릴까요?',
-]
+const guideContents = [`안녕하세요! ${name} 님의 여행 매니저 누리입니다.`, '무엇을 도와드릴까요?']
 const choices = ['체력 측정하기', '여행 계획 세우기', '여행지 살펴보기', '내 여행 계획 보관함 가기']
 </script>
 <style scoped>

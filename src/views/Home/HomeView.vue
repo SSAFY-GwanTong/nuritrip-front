@@ -1,23 +1,23 @@
 <template>
   <div class="mainpage">
-      <div class="group">
-        <p class="p">
-          당신의 체력에 맞춘
-          <br />
-          맞춤형 여행 코스
-        </p>
-        <p class="text-wrapper-2">
-          체력 측정부터 여행 일정까지 <br />
-          여행 매니저와 함께하는 완벽한 여행 준비
-        </p>
-        <RouterLink to="/signin" class="overlap-group-wrapper">
-          <div class="overlap-group">
-            <div class="text-wrapper">시작하기</div>
-          </div>
-        </RouterLink>
-      </div>
-      <img class="shiba-inu-dog" alt="Shiba inu dog" :src="shibaInuDogShowingMuscles" />
+    <div class="group">
+      <p class="p">
+        당신의 체력에 맞춘
+        <br />
+        맞춤형 여행 코스
+      </p>
+      <p class="text-wrapper-2">
+        체력 측정부터 여행 일정까지 <br />
+        여행 매니저와 함께하는 완벽한 여행 준비
+      </p>
+      <RouterLink to="/signin" class="overlap-group-wrapper">
+        <div class="overlap-group">
+          <div class="text-wrapper">시작하기</div>
+        </div>
+      </RouterLink>
     </div>
+    <img class="shiba-inu-dog" alt="Shiba inu dog" :src="shibaInuDogShowingMuscles" />
+  </div>
 </template>
 
 <script setup>
@@ -25,7 +25,7 @@ import shibaInuDogShowingMuscles from '@/assets/img/shiba-inu-dog-showing-muscle
 </script>
 
 <style scoped>
-body{
+body {
   width: 100%;
   height: 100%;
   overflow-x: scroll;

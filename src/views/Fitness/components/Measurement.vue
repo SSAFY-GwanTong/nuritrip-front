@@ -11,7 +11,15 @@
       <div class="counter-section">
         <div class="progress-circle">
           <svg class="circle" width="120" height="120">
-            <circle class="background" cx="60" cy="60" r="50" fill="none" stroke="#eee" stroke-width="10" />
+            <circle
+              class="background"
+              cx="60"
+              cy="60"
+              r="50"
+              fill="none"
+              stroke="#eee"
+              stroke-width="10"
+            />
             <circle
               class="progress"
               cx="60"
@@ -25,9 +33,7 @@
               stroke-linecap="round"
             />
           </svg>
-          <div class="counter-number">
-            {{ counter }} <span class="small">개</span>
-          </div>
+          <div class="counter-number">{{ counter }} <span class="small">개</span></div>
         </div>
       </div>
     </div>
@@ -63,7 +69,7 @@ let countdownTimer = null // 대기 타이머
 // Teachable Machine 초기화
 const initTeachableMachine = async () => {
   try {
-    const MODEL_URL = "https://teachablemachine.withgoogle.com/models/8VC6L_Qre/"
+    const MODEL_URL = 'https://teachablemachine.withgoogle.com/models/8VC6L_Qre/'
     const modelURL = `${MODEL_URL}model.json`
     const metadataURL = `${MODEL_URL}metadata.json`
     model = await window.tmPose.load(modelURL, metadataURL)
@@ -73,14 +79,14 @@ const initTeachableMachine = async () => {
     await webcam.setup()
     await webcam.play()
 
-    const canvas = document.getElementById("canvas")
+    const canvas = document.getElementById('canvas')
     canvas.width = size
     canvas.height = size
-    canvasCtx = canvas.getContext("2d")
+    canvasCtx = canvas.getContext('2d')
 
     startCountdown() // 대기 타이머 시작
   } catch (error) {
-    console.error("Teachable Machine 초기화 실패:", error)
+    console.error('Teachable Machine 초기화 실패:', error)
   }
 }
 
@@ -103,7 +109,7 @@ const startExercise = () => {
   timer = setInterval(() => {
     currentTick++
     timeProgress.value = 100 - (currentTick / totalTicks) * 100 // 진행 바 반대로 감소
-    remainingTime.value = Math.ceil(duration - (currentTick / 10)) // 남은 시간 갱신
+    remainingTime.value = Math.ceil(duration - currentTick / 10) // 남은 시간 갱신
 
     if (currentTick >= totalTicks) {
       clearInterval(timer)

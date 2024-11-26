@@ -1,13 +1,17 @@
 <template>
   <div class="main-container">
-    <img :src="BgImg" alt="" class="bg-img">
+    <img :src="BgImg" alt="" class="bg-img" />
     <div class="signin">
       <div class="group-wrapper">
         <div class="group">
           <div class="overlap-group">
             <div class="title">로그인</div>
             <InputBox type="id" content="아이디" @update-input="handleInputUpdate"></InputBox>
-            <InputBox type="password" content="비밀번호" @update-input="handleInputUpdate"></InputBox>
+            <InputBox
+              type="password"
+              content="비밀번호"
+              @update-input="handleInputUpdate"
+            ></InputBox>
             <div class="text-wrapper">
               <RouterLink to="/signup" class="register">회원가입</RouterLink>
               <p>Forgot password?</p>
@@ -25,45 +29,45 @@
 <script setup>
 import InputBox from '@/views/Account/components/InputBox.vue'
 import BgImg from '@/assets/img/cover1.png'
-import { ref } from 'vue';
-import { axiosInstance } from '@/axios.js';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/index.js';
+import { ref } from 'vue'
+import { axiosInstance } from '@/axios.js'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/index.js'
 
-const router = useRouter();
-const store = useAuthStore();
+const router = useRouter()
+const store = useAuthStore()
 
 const id = ref('')
 const password = ref('')
 const handleInputUpdate = (data) => {
-  if(data.type === "id"){
-    id.value = data.value;
-  }else if(data.type === "password"){
-    password.value = data.value;
+  if (data.type === 'id') {
+    id.value = data.value
+  } else if (data.type === 'password') {
+    password.value = data.value
   }
 }
 
 const login = () => {
   const params = {
-    id: id.value, 
-    password: password.value, 
+    id: id.value,
+    password: password.value,
   }
-  axiosInstance.post(`/auth/signin`, params)
+  axiosInstance
+    .post(`/auth/signin`, params)
     .then((res) => {
-      if(res.data.isSuccess === true){
+      if (res.data.isSuccess === true) {
         const data = res.data.result
         store.setJwtToken(data.jwtToken)
-        router.push({path: '/home', state:{name: data.name}})
-      }else{
-        alert("로그인 실패!")
+        store.setName(data.name)
+        router.push('/home')
+      } else {
+        alert('로그인 실패!')
       }
     })
     .catch((err) => {
-      alert("로그인 실패!")
+      alert('로그인 실패!')
     })
 }
-
-
 </script>
 
 <style scoped>
@@ -74,10 +78,10 @@ const login = () => {
   display: flex;
   overflow: hidden;
 }
-.bg-img{
+.bg-img {
   position: relative;
   height: 100vh;
-  margin-left :180px;
+  margin-left: 180px;
 }
 .signin {
   position: absolute;
@@ -116,7 +120,8 @@ const login = () => {
   margin-top: 10px;
   justify-content: space-between;
 }
-.text-wrapper p, .register{
+.text-wrapper p,
+.register {
   margin: 0;
   color: #ac68f7;
   text-decoration: underline;
